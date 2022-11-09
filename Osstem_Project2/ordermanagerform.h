@@ -36,6 +36,14 @@ private slots:
     void modClient(int, QString, QString, QString);    //고객 제거 반영
 
     void on_clientButton_clicked();
+    void on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
+
+    void updateProduct(int,QString, QString, QString);
+    void delProduct(int);    //고객 제거 반영
+    void modProduct(int, QString, QString, QString);    //고객 제거 반영
+
+    void on_productButton_clicked();
+    void on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
 };
 
 #endif // ORDERMANAGERFORM_H

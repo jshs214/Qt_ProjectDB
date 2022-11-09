@@ -31,6 +31,9 @@ private:
     QSqlTableModel *productModel;
 
 signals:
+    void productAddToOrder(int, QString, QString, QString);
+    void productDelToOrder(int);
+    void productModToOrder(int, QString, QString, QString);
 
 private slots:
     void on_clearButton_clicked();      /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */

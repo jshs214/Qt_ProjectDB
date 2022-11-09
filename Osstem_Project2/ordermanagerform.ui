@@ -33,13 +33,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="statePushButton">
-           <property name="text">
-            <string>OrderManagerInfo</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
@@ -126,7 +119,7 @@
        </item>
        <item>
         <layout class="QFormLayout" name="OrderformLayout">
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QLabel" name="idLabel">
            <property name="text">
             <string>&amp;OrderNum</string>
@@ -136,7 +129,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="1" column="1">
           <widget class="QLineEdit" name="idLineEdit">
            <property name="text">
             <string>Auto-generated</string>
@@ -149,7 +142,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="cIdLabel">
            <property name="text">
             <string>&amp;Client</string>
@@ -159,7 +152,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QLineEdit" name="cIdLineEdit">
            <property name="readOnly">
             <bool>true</bool>
@@ -169,7 +162,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0">
           <widget class="QLabel" name="pIdLabel">
            <property name="text">
             <string>&amp;Product</string>
@@ -179,7 +172,7 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QLineEdit" name="pIdLineEdit">
            <property name="text">
             <string/>
@@ -192,7 +185,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QLabel" name="stockLabel">
            <property name="text">
             <string>&amp;Stock</string>
@@ -202,7 +195,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QLineEdit" name="stockLineEdit">
            <property name="inputMask">
             <string/>
@@ -215,14 +208,14 @@
            </property>
           </widget>
          </item>
-         <item row="6" column="0">
+         <item row="7" column="0">
           <widget class="QLabel" name="priceLabel">
            <property name="text">
             <string>Price</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
+         <item row="7" column="1">
           <widget class="QLineEdit" name="priceLineEdit">
            <property name="readOnly">
             <bool>true</bool>
@@ -232,7 +225,7 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="0" colspan="2">
+         <item row="8" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QPushButton" name="addPushButton">
@@ -257,14 +250,14 @@
            </item>
           </layout>
          </item>
-         <item row="5" column="0">
+         <item row="6" column="0">
           <widget class="QLabel" name="addressLabel">
            <property name="text">
             <string>Address</string>
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="6" column="1">
           <widget class="QLineEdit" name="addressLineEdit">
            <property name="readOnly">
             <bool>true</bool>
@@ -310,6 +303,13 @@
              <widget class="QPushButton" name="searchPushButton">
               <property name="text">
                <string>S&amp;earch</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="statePushButton">
+              <property name="text">
+               <string>All Info</string>
               </property>
              </widget>
             </item>

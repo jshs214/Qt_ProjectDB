@@ -60,6 +60,10 @@ void ProductManagerForm::loadData()
     for(int i = 0; i < productModel->rowCount(); i++) {
         int id = productModel->data(productModel->index(i, 0)).toInt();
         QString name = productModel->data(productModel->index(i, 1)).toString();
+        QString price = productModel->data(productModel->index(i, 2)).toString();
+        QString stock = productModel->data(productModel->index(i, 3)).toString();
+
+        emit productAddToOrder(id, name, price, stock);
     }
 }
 
@@ -101,6 +105,9 @@ void ProductManagerForm::showContextMenu(const QPoint &pos)
 void ProductManagerForm::removeItem()
 {
     QModelIndex index = ui->productTableView->currentIndex();
+    int sendId =index.sibling(index.row(), 0).data().toString().toInt();
+    emit productDelToOrder(sendId);
+
     if(index.isValid()) {
         productModel->removeRow(index.row());
         productModel->select();
@@ -137,7 +144,7 @@ void ProductManagerForm::on_addPushButton_clicked()
         query.bindValue(3, stock);
         query.exec();
         productModel->select();
-
+        emit productAddToOrder(id, name, price, stock);
     }
 }
 
@@ -160,6 +167,7 @@ void ProductManagerForm::on_modifyPushButton_clicked()
         query.bindValue(3, id);
         query.exec();
         productModel->select();
+        emit productModToOrder(id, name, price, stock);
     }
 }
 

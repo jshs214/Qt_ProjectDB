@@ -136,3 +136,88 @@ void OrderManagerForm::on_clientButton_clicked()
     }
 }
 
+
+void OrderManagerForm::on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    ui->idLineEdit->clear();
+    Q_UNUSED(column);
+    QString client;
+    client = item->text(0)+" ("+item->text(1)+")";
+
+    ui->cIdLineEdit->setText(client);
+    ui->addressLineEdit->setText(item->text(3));
+}
+
+//제품 정보 추가 or loaddata
+void OrderManagerForm::updateProduct(int id, QString name, QString price, QString stock)
+{
+    QTreeWidgetItem* pItem = new QTreeWidgetItem(ui->productTreeWidget);
+    pItem->setText(0,QString::number(id));
+    pItem->setText(1,name);
+    pItem->setText(2,price);
+    pItem->setText(3,stock);
+}
+
+// 제품 정보 제거 시 반영
+void OrderManagerForm::delProduct(int id)
+{
+    {
+        auto item = ui->productTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);
+        foreach(auto i, item) {
+            if(QString::number(id) == i->text(0))
+                ui->productTreeWidget->takeTopLevelItem(ui->productTreeWidget->indexOfTopLevelItem(i));
+            delete i;
+        }
+    }
+
+}
+
+// 제품 정보 변경 시 반영
+void OrderManagerForm::modProduct(int id, QString name, QString price, QString stock)
+{
+    auto item = ui->productTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);        //키값비교, 0
+    foreach(auto i, item) {
+        if(QString::number(id) == i->text(0)){
+        i->setText(0, QString::number(id));
+        i->setText(1, name);
+        i->setText(2, price);
+        i->setText(3, stock);
+        }
+    }
+}
+
+
+void OrderManagerForm::on_productButton_clicked()
+{
+    QString str = ui->productLineEdit->text();
+    auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
+
+    for(int i =0; i < ui->productTreeWidget->topLevelItemCount() ; i++)
+    {
+        ui->productTreeWidget->topLevelItem(i)->setHidden(true);
+    }
+
+    auto pItem = ui->productTreeWidget->findItems(str, Qt::MatchFixedString, 0); //id 는 완전일치
+    foreach(auto i, pItem) {
+        i->setHidden(false);
+    }
+
+    pItem = ui->productTreeWidget->findItems(str, flag, 1);
+    foreach(auto i, pItem) {
+        i->setHidden(false);
+    }
+}
+
+
+void OrderManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    ui->idLineEdit->clear();
+    ui->stockLineEdit->clear();
+    Q_UNUSED(column);
+    QString product;
+    product = item->text(0)+" ("+item->text(1)+")";
+
+    ui->pIdLineEdit->setText(product);
+    ui->priceLineEdit->setText(item->text(2));
+}
+

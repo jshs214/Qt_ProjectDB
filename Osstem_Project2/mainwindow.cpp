@@ -44,9 +44,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(serverForm, SIGNAL(destroyed()),
             serverForm, SLOT(deleteLater()));
 
-    connect(clientForm, SIGNAL(clientAddToServer(int, QString)),
-            serverForm, SLOT(addClient(int, QString)));
-
     connect(clientForm, SIGNAL(clientAddToOrder(int, QString, QString, QString)),
             orderForm, SLOT(updateClient(int, QString, QString, QString)));
     connect(clientForm, SIGNAL(clientDelToOrder(int)),
@@ -54,6 +51,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clientForm, SIGNAL(clientModToOrder(int, QString, QString, QString)),
             orderForm, SLOT(modClient(int, QString, QString, QString)));
 
+    connect(productForm, SIGNAL(productAddToOrder(int, QString, QString, QString)),
+            orderForm, SLOT(updateProduct(int, QString, QString, QString)));
+    connect(productForm, SIGNAL(productDelToOrder(int)),
+            orderForm, SLOT(delProduct(int)));
+    connect(productForm, SIGNAL(productModToOrder(int, QString, QString, QString)),
+            orderForm, SLOT(modProduct(int, QString, QString, QString)));
+
+    connect(clientForm, SIGNAL(clientAddToServer(int, QString)),
+            serverForm, SLOT(addClient(int, QString)));
 
     clientForm->loadData();
     productForm->loadData();

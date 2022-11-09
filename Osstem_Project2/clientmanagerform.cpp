@@ -169,9 +169,6 @@ void ClientManagerForm::removeItem()
         clientModel->select();
         ui->clientTableView->update();
     }
-
-
-
 }
 
 void ClientManagerForm::on_searchPushButton_clicked()
