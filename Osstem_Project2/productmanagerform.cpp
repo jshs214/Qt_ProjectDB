@@ -1,4 +1,5 @@
 #include "productmanagerform.h"
+#include "qsqlerror.h"
 #include "ui_productmanagerform.h"
 
 #include <QFile>
@@ -8,6 +9,7 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include <QMessageBox>
+#include <QSqlError>
 
 ProductManagerForm::ProductManagerForm(QWidget *parent) :
     QWidget(parent),
@@ -23,7 +25,7 @@ ProductManagerForm::ProductManagerForm(QWidget *parent) :
     ui->productTableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(ui->productTableView, SIGNAL(customContextMenuRequested(QPoint)), this,
-                                                        SLOT(showContextMenu(QPoint)));
+            SLOT(showContextMenu(QPoint)));
 
     connect(ui->searchLineEdit, SIGNAL(returnPressed()),
             this, SLOT(on_searchPushButton_clicked()));
@@ -43,11 +45,11 @@ void ProductManagerForm::loadData()
     db.setDatabaseName("product.db");
     if (db.open( )) {
         QSqlQuery query(db);
-        query.exec("CREATE TABLE IF NOT EXISTS product(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
+        query.exec("CREATE TABLE IF NOT EXISTS productList(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
                    " price VARCHAR(20) NOT NULL, stock VARCHAR(50));");
 
         productModel = new QSqlTableModel(this,db);
-        productModel->setTable("product");
+        productModel->setTable("productList");
         productModel->select();
         productModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
         productModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
@@ -83,7 +85,7 @@ ProductManagerForm::~ProductManagerForm()
 int ProductManagerForm::makeId( )
 {
     if(productModel->rowCount() == 0) {
-        return 90000;
+        return 50000;
     } else {
         auto id = productModel->data(productModel->index(productModel->rowCount()-1, 0)).toInt();
         return ++id;
@@ -97,8 +99,8 @@ int ProductManagerForm::makeId( )
 void ProductManagerForm::showContextMenu(const QPoint &pos)
 {
     QPoint globalPos = ui->productTableView->mapToGlobal(pos);
-        if(ui->productTableView->indexAt(pos).isValid())
-            menu->exec(globalPos);
+    if(ui->productTableView->indexAt(pos).isValid())
+        menu->exec(globalPos);
 }
 
 /* 제품정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
@@ -137,7 +139,7 @@ void ProductManagerForm::on_addPushButton_clicked()
     stock = ui->stockLineEdit->text();
     if(name.length()) {
         QSqlQuery query(productModel->database());
-        query.prepare("INSERT INTO product VALUES (?, ?, ?, ?)");
+        query.prepare("INSERT INTO productList VALUES (?, ?, ?, ?)");
         query.bindValue(0, id);
         query.bindValue(1, name);
         query.bindValue(2, price);
@@ -160,7 +162,7 @@ void ProductManagerForm::on_modifyPushButton_clicked()
         stock = ui->stockLineEdit->text();
 
         QSqlQuery query(productModel->database());
-        query.prepare("UPDATE product SET name = ?, price = ?, stock = ? WHERE id = ?");
+        query.prepare("UPDATE productList SET name = ?, price = ?, stock = ? WHERE id = ?");
         query.bindValue(0, name);
         query.bindValue(1, price);
         query.bindValue(2, stock);
@@ -229,5 +231,86 @@ void ProductManagerForm::on_productTableView_clicked(const QModelIndex &index)
     ui->nameLineEdit->setText( index.sibling(index.row(), 1).data().toString() );
     ui->priceLineEdit->setText( index.sibling(index.row(), 2).data().toString() );
     ui->stockLineEdit->setText( index.sibling(index.row(), 3).data().toString() );
+}
 
+/* Order에서 주문추가 시, 재고반영을 위한 슬롯 */
+void ProductManagerForm::receiveAddStock(int key, QString inStock) //추가 시 재고 변경
+{
+    QSqlQuery query(productModel->database());
+    int stock, result;
+
+    // 주문 전 기존 재고 뽑음
+    query.prepare("SELECT stock FROM productList WHERE id = ?");
+    query.bindValue(0, key);
+    query.exec();
+
+    while (query.next()) {
+        stock = query.value(0).toInt();
+    }
+
+    result = stock - inStock.toInt();
+    /* 주문 시, 재고부족을 위한 메시지 박스 */
+    if(stock < inStock.toInt()) {
+        QMessageBox::information(this, tr("Error"),
+                                 QString( tr("out of stock\nYou can order up to %0.") )
+                                                                    .arg(stock));
+        return;
+    }
+
+    query.prepare("UPDATE productList SET stock = ? WHERE id = ?");
+
+    query.bindValue(0, result);
+    query.bindValue(1, key);
+    query.exec();
+    productModel->select();
+
+}
+
+// 키값, 수정할 수량, 주문 되어있는 수량
+void ProductManagerForm::receiveModStock(int key, QString updateStock, QString orderStock)    /* Order에서 주문변경 시, 재고반영을 위한 슬롯 */
+{
+    QSqlQuery query(productModel->database());
+    int stock, result;
+
+    // 주문 전 기존 재고 뽑음
+    query.prepare("SELECT stock FROM productList WHERE id = ?");
+    query.bindValue(0, key);
+    query.exec();
+
+    while (query.next()) {
+        stock = query.value(0).toInt();
+    }
+
+    result = stock + orderStock.toInt() - updateStock.toInt();
+
+    query.prepare("UPDATE productList SET stock = ? WHERE id = ?");
+
+    query.bindValue(0, result);
+    query.bindValue(1, key);
+    query.exec();
+    productModel->select();
+}
+
+void ProductManagerForm::receiveDelStock(int key, QString delStock)     /* Order에서 주문내역제거 시, 재고반영을 위한 슬롯 */
+{
+    QSqlQuery query(productModel->database());
+    int stock, result;
+
+    // 주문 전 기존 재고 뽑음
+    query.prepare("SELECT stock FROM productList WHERE id = ?");
+    query.bindValue(0, key);
+    query.exec();
+
+    while (query.next()) {
+        stock = query.value(0).toInt();
+    }
+
+    result = stock + delStock.toInt();
+
+    query.prepare("UPDATE productList SET stock = ? WHERE id = ?");
+
+    query.bindValue(0, result);
+    query.bindValue(1, key);
+    query.exec();
+    productModel->select();
 }

@@ -58,11 +58,20 @@ MainWindow::MainWindow(QWidget *parent)
     connect(productForm, SIGNAL(productModToOrder(int, QString, QString, QString)),
             orderForm, SLOT(modProduct(int, QString, QString, QString)));
 
+    /*키값(재고)를 위한 시그널 슬롯 */
+    connect(orderForm, SIGNAL(productAddKeySent(int, QString)),       //주문 추가
+            productForm, SLOT(receiveAddStock(int, QString)));
+    connect(orderForm, SIGNAL(productModKeySent(int,QString,QString)),//주문 변경
+            productForm, SLOT(receiveModStock(int, QString, QString)));
+    connect(orderForm, SIGNAL(removedataSent(int, QString)),        //주문 삭제
+            productForm, SLOT(receiveDelStock(int, QString)));
+
     connect(clientForm, SIGNAL(clientAddToServer(int, QString)),
             serverForm, SLOT(addClient(int, QString)));
 
     clientForm->loadData();
     productForm->loadData();
+    orderForm->loadData();
 
 
     /* ui 설정 */

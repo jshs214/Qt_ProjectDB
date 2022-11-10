@@ -22,7 +22,7 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_ProductManagerForm_t {
-    uint offsetsAndSizes[30];
+    uint offsetsAndSizes[36];
     char stringdata0[19];
     char stringdata1[18];
     char stringdata2[1];
@@ -38,6 +38,9 @@ struct qt_meta_stringdata_ProductManagerForm_t {
     char stringdata12[28];
     char stringdata13[12];
     char stringdata14[6];
+    char stringdata15[16];
+    char stringdata16[16];
+    char stringdata17[16];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_ProductManagerForm_t::offsetsAndSizes) + ofs), len 
@@ -57,7 +60,10 @@ static const qt_meta_stringdata_ProductManagerForm_t qt_meta_stringdata_ProductM
         QT_MOC_LITERAL(204, 27),  // "on_searchPushButton_clicked"
         QT_MOC_LITERAL(232, 27),  // "on_productTableView_clicked"
         QT_MOC_LITERAL(260, 11),  // "QModelIndex"
-        QT_MOC_LITERAL(272, 5)   // "index"
+        QT_MOC_LITERAL(272, 5),  // "index"
+        QT_MOC_LITERAL(278, 15),  // "receiveAddStock"
+        QT_MOC_LITERAL(294, 15),  // "receiveModStock"
+        QT_MOC_LITERAL(310, 15)   // "receiveDelStock"
     },
     "ProductManagerForm",
     "productAddToOrder",
@@ -73,7 +79,10 @@ static const qt_meta_stringdata_ProductManagerForm_t qt_meta_stringdata_ProductM
     "on_searchPushButton_clicked",
     "on_productTableView_clicked",
     "QModelIndex",
-    "index"
+    "index",
+    "receiveAddStock",
+    "receiveModStock",
+    "receiveDelStock"
 };
 #undef QT_MOC_LITERAL
 
@@ -83,7 +92,7 @@ static const uint qt_meta_data_ProductManagerForm[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-      11,   14, // methods
+      14,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -91,19 +100,22 @@ static const uint qt_meta_data_ProductManagerForm[] = {
        3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    4,   80,    2, 0x06,    1 /* Public */,
-       3,    1,   89,    2, 0x06,    6 /* Public */,
-       4,    4,   92,    2, 0x06,    8 /* Public */,
+       1,    4,   98,    2, 0x06,    1 /* Public */,
+       3,    1,  107,    2, 0x06,    6 /* Public */,
+       4,    4,  110,    2, 0x06,    8 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       5,    0,  101,    2, 0x08,   13 /* Private */,
-       6,    1,  102,    2, 0x08,   14 /* Private */,
-       7,    0,  105,    2, 0x08,   16 /* Private */,
-       8,    0,  106,    2, 0x08,   17 /* Private */,
-       9,    0,  107,    2, 0x08,   18 /* Private */,
-      10,    0,  108,    2, 0x08,   19 /* Private */,
-      11,    0,  109,    2, 0x08,   20 /* Private */,
-      12,    1,  110,    2, 0x08,   21 /* Private */,
+       5,    0,  119,    2, 0x08,   13 /* Private */,
+       6,    1,  120,    2, 0x08,   14 /* Private */,
+       7,    0,  123,    2, 0x08,   16 /* Private */,
+       8,    0,  124,    2, 0x08,   17 /* Private */,
+       9,    0,  125,    2, 0x08,   18 /* Private */,
+      10,    0,  126,    2, 0x08,   19 /* Private */,
+      11,    0,  127,    2, 0x08,   20 /* Private */,
+      12,    1,  128,    2, 0x08,   21 /* Private */,
+      15,    2,  131,    2, 0x08,   23 /* Private */,
+      16,    3,  136,    2, 0x08,   26 /* Private */,
+      17,    2,  143,    2, 0x08,   30 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QString, QMetaType::QString,    2,    2,    2,    2,
@@ -119,6 +131,9 @@ static const uint qt_meta_data_ProductManagerForm[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 13,   14,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QString,    2,    2,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
 
        0        // eod
 };
@@ -140,6 +155,9 @@ void ProductManagerForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
         case 8: _t->on_statePushButton_clicked(); break;
         case 9: _t->on_searchPushButton_clicked(); break;
         case 10: _t->on_productTableView_clicked((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
+        case 11: _t->receiveAddStock((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 12: _t->receiveModStock((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3]))); break;
+        case 13: _t->receiveDelStock((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -176,7 +194,7 @@ const QMetaObject ProductManagerForm::staticMetaObject = { {
     nullptr,
 qt_incomplete_metaTypeArray<qt_meta_stringdata_ProductManagerForm_t
 , QtPrivate::TypeAndForceComplete<ProductManagerForm, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>
-, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QPoint &, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QModelIndex &, std::false_type>
+, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QPoint &, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QModelIndex &, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>
 
 
 >,
@@ -203,13 +221,13 @@ int ProductManagerForm::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 11)
+        if (_id < 14)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 11;
+        _id -= 14;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 11)
+        if (_id < 14)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 11;
+        _id -= 14;
     }
     return _id;
 }

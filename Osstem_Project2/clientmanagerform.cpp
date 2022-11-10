@@ -44,11 +44,11 @@ void ClientManagerForm::loadData()
     db.setDatabaseName("client.db");
     if (db.open()) {
         QSqlQuery query(db);
-        query.exec("CREATE TABLE IF NOT EXISTS client(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
+        query.exec("CREATE TABLE IF NOT EXISTS clientList(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
                    " phoneNumber VARCHAR(20) NOT NULL, address VARCHAR(50));");
 
         clientModel = new QSqlTableModel(this, db);
-        clientModel->setTable("client");
+        clientModel->setTable("clientList");
         clientModel->select();
         clientModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
         clientModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
@@ -116,9 +116,10 @@ void ClientManagerForm::on_addPushButton_clicked()
     name = ui->nameLineEdit->text();
     phoneNumber = ui->phoneNumberLineEdit->text();
     address = ui->addressLineEdit->text();
+
     if(name.length()) {
         QSqlQuery query(clientModel->database());
-        query.prepare("INSERT INTO client VALUES (?, ?, ?, ?)");
+        query.prepare("INSERT INTO clientList VALUES (?, ?, ?, ?)");
         query.bindValue(0, id);
         query.bindValue(1, name);
         query.bindValue(2, phoneNumber);
@@ -128,7 +129,6 @@ void ClientManagerForm::on_addPushButton_clicked()
 
         emit clientAddToOrder(id, name, phoneNumber,address);
         emit clientAddToServer(id, name);
-
     }
 }
 
@@ -145,7 +145,7 @@ void ClientManagerForm::on_modifyPushButton_clicked()
         address = ui->addressLineEdit->text();
 
         QSqlQuery query(clientModel->database());
-        query.prepare("UPDATE client SET name = ?, phoneNumber = ?, address = ? WHERE id = ?");
+        query.prepare("UPDATE clientList SET name = ?, phoneNumber = ?, address = ? WHERE id = ?");
         query.bindValue(0, name);
         query.bindValue(1, phoneNumber);
         query.bindValue(2, address);

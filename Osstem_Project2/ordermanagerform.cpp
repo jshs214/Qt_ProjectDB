@@ -1,4 +1,5 @@
 #include "ordermanagerform.h"
+#include "qsqltablemodel.h"
 #include "ui_ordermanagerform.h"
 
 #include "ordermanagerform.h"
@@ -6,6 +7,10 @@
 #include <QFile>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
 
 OrderManagerForm::OrderManagerForm(QWidget *parent) :
     QWidget(parent),
@@ -37,15 +42,53 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
 }
 
 
+void OrderManagerForm::loadData()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "orderConnection");
+    db.setDatabaseName("Order.db");
+    if (db.open()) {
+        QSqlQuery query(db);
+        //id, client, product, stock, price, sum, address
+        query.exec("CREATE TABLE IF NOT EXISTS orderList(id INTEGER Primary Key, client VARCHAR(30) NOT NULL,"
+                   "product VARCHAR(30) NOT NULL, stock VARCHAR(10), "
+                   "price VARCHAR(30), sum VARCHAR(30), address VARCHAR(30));");
+
+        orderModel = new QSqlTableModel(this, db);
+        orderModel->setTable("orderList");
+        orderModel->select();
+        orderModel->setHeaderData(0, Qt::Horizontal, QObject::tr("OrderNum"));
+        orderModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Client"));
+        orderModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Product"));
+        orderModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Stock"));
+        orderModel->setHeaderData(4, Qt::Horizontal, QObject::tr("Price"));
+        orderModel->setHeaderData(5, Qt::Horizontal, QObject::tr("Sum"));
+        orderModel->setHeaderData(6, Qt::Horizontal, QObject::tr("Address"));
+
+        ui->orderTableView->setModel(orderModel);
+    }
+}
 
 /* 소멸자에서 파일 출력 */
 OrderManagerForm::~OrderManagerForm()
 {
     delete ui;
-
+    QSqlDatabase db = QSqlDatabase::database("orderConnection");
+    if(db.isOpen()) {
+        orderModel->submitAll();
+        db.close();
+    }
 }
 
 
+int OrderManagerForm::makeId( )
+{
+    if(orderModel->rowCount() == 0) {
+        return 230000;
+    } else {
+        auto id = orderModel->data(orderModel->index(orderModel->rowCount()-1, 0)).toInt();
+        return ++id;
+    }
+}
 
 /* ContextMenu 슬롯 */
 void OrderManagerForm::showContextMenu(const QPoint &pos)
@@ -58,7 +101,20 @@ void OrderManagerForm::showContextMenu(const QPoint &pos)
 /* 주문정보의 데이터(트리위젯)의 리스트 제거 슬롯 */
 void OrderManagerForm::removeItem()
 {
+    QString productKey, delStock;
+    QModelIndex index = ui->orderTableView->currentIndex();
+    productKey = index.sibling(index.row(), 2).data().toString().left(5);
+    delStock = index.sibling(index.row(), 3).data().toString();
 
+
+    if(index.isValid()) {
+        orderModel->removeRow(index.row());
+        orderModel->select();
+        ui->orderTableView->update();
+    }
+
+    /* 데이터 제거 시, 제품 ID와 수량을 시그널로 보냄 */
+    emit removedataSent(productKey.toInt() , delStock);
 }
 
 
@@ -106,10 +162,10 @@ void OrderManagerForm::modClient(int id, QString name, QString phoneNumber, QStr
     auto item = ui->clientTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);        //키값비교, 0
     foreach(auto i, item) {
         if(QString::number(id) == i->text(0)){
-        i->setText(0, QString::number(id));
-        i->setText(1, name);
-        i->setText(2, phoneNumber);
-        i->setText(3, address);
+            i->setText(0, QString::number(id));
+            i->setText(1, name);
+            i->setText(2, phoneNumber);
+            i->setText(3, address);
         }
     }
 }
@@ -178,10 +234,10 @@ void OrderManagerForm::modProduct(int id, QString name, QString price, QString s
     auto item = ui->productTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);        //키값비교, 0
     foreach(auto i, item) {
         if(QString::number(id) == i->text(0)){
-        i->setText(0, QString::number(id));
-        i->setText(1, name);
-        i->setText(2, price);
-        i->setText(3, stock);
+            i->setText(0, QString::number(id));
+            i->setText(1, name);
+            i->setText(2, price);
+            i->setText(3, stock);
         }
     }
 }
@@ -219,5 +275,188 @@ void OrderManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, i
 
     ui->pIdLineEdit->setText(product);
     ui->priceLineEdit->setText(item->text(2));
+}
+
+/* 총합 계산 슬롯 */
+void OrderManagerForm::on_stockLineEdit_textChanged(const QString &stock)
+{
+    int sum;
+    sum = stock.toInt() * ui->priceLineEdit->text().toInt();
+    ui->sumLineEdit->setText(QString::number(sum));
+}
+
+/* 주문 정보 추가 */
+void OrderManagerForm::on_addPushButton_clicked()
+{
+    QTreeWidgetItem* pItem = ui->productTreeWidget->currentItem();
+    QString  client, product, stock, price, address,sum;
+    QString productKey, productTree_Stock;
+
+
+    int id = makeId( );
+    ui->idLineEdit->setText(QString::number(id));
+    client = ui->cIdLineEdit->text();
+    product = ui->pIdLineEdit->text();
+    stock = ui->stockLineEdit->text();
+    price = ui->priceLineEdit->text();
+    address = ui->addressLineEdit->text();
+    sum = ui->sumLineEdit->text();
+
+    productTree_Stock = pItem->text(3); //제품리스트의 재고
+    productKey =  ui->pIdLineEdit->text().left(5);   //제품 키값
+
+    /* 총합을 위한 연산 */
+    int result = price.toInt() * stock.toInt();
+    sum = QString::number(result);
+
+    /* 재고반영을 위해 제품키값과, 수량을 시그널로 보냄 */
+    emit productAddKeySent(productKey.toInt(), stock );
+
+    if(pItem == nullptr) return; // 예외
+
+    /* 주문 수량이 재고보다 많을 경우 예외*/
+    if(productTree_Stock.toInt() < ui->stockLineEdit->text().toInt()) return;
+
+    /* 주문이 되면 제품리스트의 재고를 변경 */
+    QString result_stock = QString::number(productTree_Stock.toInt() - stock.toInt());
+    pItem->setText((3), result_stock);
+
+    /* 주문 할 데이터를 다 입력, 재고>=주문수량이면 주문정보 추가 */
+    if( client.length() && product.length() && stock.length() &&price.length() && address.length()
+            && productTree_Stock.toInt() >= stock.toInt())
+    {
+        QSqlQuery query(orderModel->database());
+        query.prepare("INSERT INTO orderList VALUES (?, ?, ?, ?, ?, ?, ?)");
+        query.bindValue(0, id);
+        query.bindValue(1, client);
+        query.bindValue(2, product);
+        query.bindValue(3, stock);
+        query.bindValue(4, price);
+        query.bindValue(5, sum);
+        query.bindValue(6, address);
+
+        query.exec();
+        orderModel->select();
+
+        ui->cIdLineEdit->clear();
+        ui->pIdLineEdit->clear();
+        ui->stockLineEdit->clear();
+        ui->addressLineEdit->clear();
+        ui->priceLineEdit->clear();
+    }
+
+}
+
+
+
+void OrderManagerForm::on_modifyPushButton_clicked()
+{
+
+    QModelIndex index = ui->orderTableView->currentIndex();
+    if(index.isValid()) {
+        // 프로덕트 트리위젯 재고 반영 아직 안함
+        //        QTreeWidgetItem* pItem = ui->productTreeWidget->currentItem();
+
+        int id = orderModel->data(index.siblingAtColumn(0)).toInt();
+        QString client, product, stock, price, address, sum;
+        QString productKey, orderStock;
+
+        client = ui->cIdLineEdit->text();
+        product = ui->pIdLineEdit->text();
+        stock = ui->stockLineEdit->text();
+        price = ui->priceLineEdit->text();
+        address = ui->addressLineEdit->text();
+        sum = ui->sumLineEdit->text();
+
+
+        QSqlQuery query(orderModel->database());
+
+        // 주문 테이블의 주문 해놓은 재고 뽑음
+        query.prepare("SELECT product, stock FROM orderList WHERE id = ?");
+        query.bindValue(0, id);
+        query.exec();
+
+        while (query.next()) {
+            productKey = query.value(0).toString().left(5);
+            orderStock = query.value(1).toString();
+        }
+        /* 재고반영을 위해 키값, 수정할 수량, 입력된 수량을 시그널로 보냄 */
+        emit productModKeySent(productKey.toInt(), stock , orderStock);
+        qDebug()<< productKey.toInt() << stock << orderStock;
+
+        query.prepare("UPDATE orderList SET client = ?, product = ?, stock = ?,"
+                      "price = ?, sum = ?, address = ? WHERE id = ?");
+
+        query.bindValue(0, client);
+        query.bindValue(1, product);
+        query.bindValue(2, stock);
+        query.bindValue(3, price);
+        query.bindValue(4, sum);
+        query.bindValue(5, address);
+        query.bindValue(6, id);
+
+        query.exec();
+        orderModel->select();
+    }
+}
+
+
+void OrderManagerForm::on_orderTableView_clicked(const QModelIndex &index)
+{
+    ui->idLineEdit->setText( index.sibling(index.row(), 0).data().toString() );
+    ui->cIdLineEdit->setText( index.sibling(index.row(), 1).data().toString() );
+    ui->pIdLineEdit->setText( index.sibling(index.row(), 2).data().toString() );
+    ui->stockLineEdit->setText( index.sibling(index.row(), 3).data().toString() );
+    ui->priceLineEdit->setText( index.sibling(index.row(), 4).data().toString() );
+    ui->sumLineEdit->setText( index.sibling(index.row(), 5).data().toString() );
+    ui->addressLineEdit->setText( index.sibling(index.row(), 6).data().toString() );
+}
+
+
+void OrderManagerForm::on_searchPushButton_clicked()
+{
+    QString searchValue = ui->searchLineEdit->text();
+
+    int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
+    switch (i){
+    case 0:
+        orderModel->setFilter(QString("id = '%1'").arg(searchValue));
+        orderModel->select();
+        QMessageBox::information(this, tr("Search Info"),
+                                 QString( tr("%1 search results were found") ).arg(orderModel->rowCount()));
+        break;
+    case 1:
+        orderModel->setFilter(QString("client LIKE '%%1%'").arg(searchValue));
+        orderModel->select();
+        QMessageBox::information(this, tr("Search Info"),
+                                 QString( tr("%1 search results were found") ).arg(orderModel->rowCount()));
+        break;
+    case 2:
+        orderModel->setFilter(QString("product LIKE '%%1%'").arg(searchValue));
+        orderModel->select();
+        QMessageBox::information(this, tr("Search Info"),
+                                 QString( tr("%1 search results were found") ).arg(orderModel->rowCount()));
+        break;
+
+    default:
+        break;
+    }
+    QString filterStr = "id in (";
+    for(int i = 0; i < orderModel->rowCount(); i++) {
+        int id = orderModel->data(orderModel->index(i, 0)).toInt();
+        if(i != orderModel->rowCount()-1)
+            filterStr += QString("%1, ").arg(id);
+        else
+            filterStr += QString("%1);").arg(id);
+    }
+    orderModel->setFilter(filterStr);
+
+}
+
+
+void OrderManagerForm::on_statePushButton_clicked()
+{
+    orderModel->setFilter("");
+    orderModel->select();
 }
 
