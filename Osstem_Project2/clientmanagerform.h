@@ -33,10 +33,14 @@ private:
     QSqlTableModel *clientModel;
 
 signals:
-    void clientAddToServer(int, QString);
+
     void clientAddToOrder(int, QString, QString, QString);
     void clientDelToOrder(int);
     void clientModToOrder(int, QString, QString, QString);
+
+    void clientAddToServer(int, QString);
+    void clientModToServer(int, QString);
+    void clientRevToServer(int);
 
 private slots:
 

@@ -25,6 +25,7 @@ public:
     explicit ChattingForm(QWidget *parent = nullptr);
     ~ChattingForm();
 
+    void savedLoadData();
     void loadData();
     void saveData();
 

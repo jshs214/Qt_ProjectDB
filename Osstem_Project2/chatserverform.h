@@ -61,16 +61,19 @@ private:
     void sendChatList();    /* Chat_List로 현재 채팅방 참여인원 전달 */
 
 private slots:
+    void addClient(int, QString);           /* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */
+    void modClient(int, QString);            /* 고객의 데이터가 변경되면 서버에도 추가하는 슬롯 */
+    void remClient(int);            /* 고객의 데이터가 삭제되면 서버에도 삭제하는 슬롯 */
+
     void acceptConnection();                /* 파일 서버 */
     void readClient();                      /* 파일 전송 */
     void clientConnect();                  /* 채팅 서버 */
     void receiveData();                    /* 데이터를 받을 때 */
     void removeClient();                   /* 연결이 끊어지면 데이터 제거 */
-    void addClient(int, QString);           /* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */
     void inviteClient();                    /* 클라이언트 초대하기 */
     void kickOut();                         /* 클라이언트 강퇴하기 */
     void on_clientTreeWidget_customContextMenuRequested(const QPoint &pos); /* ContextMenu 슬롯 */
-    void remClient(int);            /* 고객의 데이터가 삭제되면 서버에도 삭제하는 슬롯 */
+
     void on_sendButton_clicked();   /* 서버 관리자의 채팅을 위한 슬롯 */
 };
 

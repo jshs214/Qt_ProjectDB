@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actionServer->setIcon(QIcon(":/images/server.png"));
     ui->actionChat->setIcon(QIcon(":/images/chat.png"));
     ui->actionQuit->setIcon(QIcon(":/images/quit.png"));
-    ui->toolBar->setIconSize(QSize(66, 66));
+    ui->toolBar->setIconSize(QSize(70, 70));
     setContextMenuPolicy (Qt::NoContextMenu);
 
     clientForm = new ClientManagerForm(this);
@@ -68,6 +68,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(clientForm, SIGNAL(clientAddToServer(int, QString)),
             serverForm, SLOT(addClient(int, QString)));
+    connect(clientForm, SIGNAL(clientModToServer(int, QString)),
+            serverForm, SLOT(modClient(int, QString)));
+    connect(clientForm, SIGNAL(clientRevToServer(int)),
+            serverForm, SLOT(remClient(int)));
+
 
     clientForm->loadData();
     productForm->loadData();

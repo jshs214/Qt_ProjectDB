@@ -57,6 +57,8 @@ void ProductManagerForm::loadData()
         productModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Stock"));
 
         ui->productTableView->setModel(productModel);
+
+
     }
 
     for(int i = 0; i < productModel->rowCount(); i++) {
@@ -148,6 +150,11 @@ void ProductManagerForm::on_addPushButton_clicked()
         productModel->select();
         emit productAddToOrder(id, name, price, stock);
     }
+
+    ui->idLineEdit->clear();
+    ui->nameLineEdit->clear();
+    ui->priceLineEdit->clear();
+    ui->stockLineEdit->clear();
 }
 
 // 변경

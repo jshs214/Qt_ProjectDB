@@ -130,6 +130,11 @@ void ClientManagerForm::on_addPushButton_clicked()
         emit clientAddToOrder(id, name, phoneNumber,address);
         emit clientAddToServer(id, name);
     }
+
+    ui->idLineEdit->clear();
+    ui->nameLineEdit->clear();
+    ui->phoneNumberLineEdit->clear();
+    ui->addressLineEdit->clear();
 }
 
 
@@ -153,6 +158,7 @@ void ClientManagerForm::on_modifyPushButton_clicked()
         query.exec();
         clientModel->select();
         emit clientModToOrder(id, name, phoneNumber, address);
+        emit clientModToServer(id, name);
     }
 
 }
@@ -163,6 +169,7 @@ void ClientManagerForm::removeItem()
     QModelIndex index = ui->clientTableView->currentIndex();
     int sendId =index.sibling(index.row(), 0).data().toString().toInt();
     emit clientDelToOrder(sendId);
+    emit clientRevToServer(sendId);
 
     if(index.isValid()) {
         clientModel->removeRow(index.row());

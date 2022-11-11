@@ -30,7 +30,9 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
 
     ui->stockLineEdit->setValidator(new QIntValidator(0, 9999, this) ); //수량에 0~9999 범위의 숫자만 받도록
 
-    //connect(ui->searchLineEdit, SIGNAL(returnPressed()), this, SLOT(on_searchPushButton_clicked()));
+    connect(ui->searchLineEdit, SIGNAL(returnPressed()), this, SLOT(on_searchPushButton_clicked()));
+    connect(ui->clientLineEdit, SIGNAL(returnPressed()), this, SLOT(on_clientButton_clicked()));
+    connect(ui->productLineEdit, SIGNAL(returnPressed()), this, SLOT(on_productButton_clicked()));
 
     ui->clientTreeWidget->QTreeView::setColumnWidth(0,40);
     ui->clientTreeWidget->QTreeView::setColumnWidth(1,70);
@@ -38,17 +40,16 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     ui->productTreeWidget->QTreeView::setColumnWidth(0,40);
     ui->productTreeWidget->QTreeView::setColumnWidth(1,70);
     ui->productTreeWidget->QTreeView::setColumnWidth(2,95);
-
 }
 
 
 void OrderManagerForm::loadData()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "orderConnection");
-    db.setDatabaseName("Order.db");
+    db.setDatabaseName("order.db");
     if (db.open()) {
         QSqlQuery query(db);
-        //id, client, product, stock, price, sum, address
+
         query.exec("CREATE TABLE IF NOT EXISTS orderList(id INTEGER Primary Key, client VARCHAR(30) NOT NULL,"
                    "product VARCHAR(30) NOT NULL, stock VARCHAR(10), "
                    "price VARCHAR(30), sum VARCHAR(30), address VARCHAR(30));");
@@ -65,6 +66,8 @@ void OrderManagerForm::loadData()
         orderModel->setHeaderData(6, Qt::Horizontal, QObject::tr("Address"));
 
         ui->orderTableView->setModel(orderModel);
+
+        ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
     }
 }
 
@@ -201,6 +204,7 @@ void OrderManagerForm::on_clientButton_clicked()
     foreach(auto i, cItem) {
         i->setHidden(false);
     }
+
 }
 
 
@@ -356,6 +360,7 @@ void OrderManagerForm::on_addPushButton_clicked()
         ui->priceLineEdit->clear();
     }
 
+    ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
 }
 
 
@@ -406,7 +411,7 @@ void OrderManagerForm::on_modifyPushButton_clicked()
                     if( beInStock< ui->stockLineEdit->text().toInt()){
                         QMessageBox::information(this, tr("Error"),
                                                  QString(tr("out of stock\nYou can change up to %0."))
-                                                                                    .arg(beInStock));
+                                                 .arg(beInStock));
                         return;
                     }
 
@@ -432,6 +437,7 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         query.exec();
         orderModel->select();
     }
+    ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
 }
 
 

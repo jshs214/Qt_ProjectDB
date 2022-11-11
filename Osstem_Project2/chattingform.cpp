@@ -83,6 +83,8 @@ ChattingForm::ChattingForm(QWidget *parent) :
             /* 프로토콜 생성해서 서버로 전송 */
             sendProtocol(Chat_Login, (ui->nameLineEdit->text().toStdString()+","+
                                       ui->idLineEdit->text().toStdString()).data() );
+
+            savedLoadData();
         }
         else if(ui->connectButton->text() == tr("Chat in"))  {        /* Chat in 버튼 클릭 시 Chat in */
             /* 프로토콜 생성해서 서버로 전송 */
@@ -112,18 +114,24 @@ ChattingForm::ChattingForm(QWidget *parent) :
     } );
 
     setWindowTitle(tr("Chat Client"));
+
+
 }
 
 /* 소멸자에서 소켓 close */
 ChattingForm::~ChattingForm()
 {
     clientSocket->close( );
+
     delete ui;
 }
 
 /* 창이 닫힐 때 서버에 연결 접속 메시지를 보내고 종료 */
 void ChattingForm::closeEvent(QCloseEvent*)
 {
+    saveData();
+    qDebug()<< "종료했슴둥 ^~^";
+
     if(ui->connectButton->text() == tr("Log In"))   return; // 로그인 안된 상태에서는 소켓 connect이 안되있으므로 예외처리
 
     /* 프로토콜 생성해서 서버로 전송 */
@@ -176,7 +184,6 @@ void ChattingForm::receiveData( )
         break;
     case Chat_Talk:     // 채팅
         ui->message->append(QString(data));     //메시지 화면에 표시
-        qDebug()<<"Chat_Talk 들어 올 때"<< QString(data);
 
         ui->inputLine->setEnabled(true);        //버튼 상태 변경
         ui->sentButton->setEnabled(true);
@@ -367,16 +374,34 @@ void ChattingForm::on_logoutButton_clicked()
     ui->stateTreeWidget->clear();
 }
 
-void ChattingForm::loadData()
+/* 프로그램 종료 후 저장되었던 기존 메시지 로그 불러오기 */
+void ChattingForm::savedLoadData()
 {
     QString filename =ui->idLineEdit->text()+ "," + ui->nameLineEdit->text();
-    qDebug()<< filename;
+
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text | QIODevice::Truncate))
+        return;
+
+    /* 메시지 로그의 데이터 입력 */
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        chattingData[ui->idLineEdit->text()].append(line);
+    }
+    file.close( );
+}
+
+/* 프로그램 실행 중, 입력된 메시지 로그 불러오기 */
+void ChattingForm::loadData()
+{    
+    QString filename =ui->idLineEdit->text()+ "," + ui->nameLineEdit->text();
 
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
 
-    /* 파일의 데이터를 ','로 파싱해서 입력 */
+    /* 메시지 로그의 데이터 입력 */
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -384,21 +409,21 @@ void ChattingForm::loadData()
     }
     file.close( );
 }
+
+/* 메시지 로그 저장 */
 void ChattingForm::saveData()
 {
     QString filename =ui->idLineEdit->text()+ "," + ui->nameLineEdit->text();
-    qDebug()<< filename;
 
     QFile file(filename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text ))
         return;
 
-    /* 파일의 데이터를 ','로 파싱해서 저장 */
+    /* 메시지 로그의 데이터를 줄마다 저장 */
     QTextStream out(&file);
     for (const auto& v : qAsConst(chattingData[ui->idLineEdit->text()])) {
         out << v <<"\n";
     }
-
 
     file.close( );
 }

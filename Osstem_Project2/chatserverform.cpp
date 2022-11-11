@@ -91,7 +91,38 @@ ChatServerForm::~ChatServerForm()
     chatServer->close( );
     fileServer->close( );
 }
+/* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */
+void ChatServerForm::addClient(int id, QString name)
+{
+    /* 사용자의 상태 변경 */
+    QTreeWidgetItem* item = new QTreeWidgetItem(ui->clientTreeWidget);
+    item->setText(0, "Off");
+    item->setIcon(0, QIcon(":/images/redlight.png"));
+    item->setText(1, name);
+    item->setText(2, QString::number(id));
+    ui->clientTreeWidget->addTopLevelItem(item);
 
+}
+/* 고객의 데이터가 변경되면 서버에도 추가하는 슬롯 */
+void ChatServerForm::modClient(int clientKey, QString name)
+{
+    /* 제품 수량 변경 시, 제품리스트에 있는 재고 반영*/
+    {
+        auto item = ui->clientTreeWidget->findItems(QString::number(clientKey), Qt::MatchFixedString, 2);
+        foreach(auto i, item) {
+                i->setText(1, name);
+        }
+    }
+}
+
+/* 고객의 데이터가 삭제되면 서버에도 삭제하는 슬롯 */
+void ChatServerForm::remClient(int id)
+{   /* 사용자 제거 */
+    foreach(auto item, ui->clientTreeWidget->findItems(QString::number(id),
+                                                       Qt::MatchFixedString, 2)) {
+        ui->clientTreeWidget->takeTopLevelItem(ui->clientTreeWidget->indexOfTopLevelItem(item));
+    }
+}
 /* 다음 소켓에 데이터가 오면 데이터를 받고 연결끊어지면 제거 */
 void ChatServerForm::clientConnect( )
 {
@@ -174,6 +205,7 @@ void ChatServerForm::receiveData( )
                 }
             }
         }
+
         /* Chat_List로 현재 채팅방 참여인원 전달 */
         sendChatList();
         break;
@@ -301,27 +333,6 @@ void ChatServerForm::removeClient()
 
 }
 
-/* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */
-void ChatServerForm::addClient(int id, QString name)
-{
-    /* 사용자의 상태 변경 */
-    QTreeWidgetItem* item = new QTreeWidgetItem(ui->clientTreeWidget);
-    item->setText(0, "Off");
-    item->setIcon(0, QIcon(":/images/redlight.png"));
-    item->setText(1, name);
-    item->setText(2, QString::number(id));
-    ui->clientTreeWidget->addTopLevelItem(item);
-
-}
-
-/* 고객의 데이터가 삭제되면 서버에도 삭제하는 슬롯 */
-void ChatServerForm::remClient(int id)
-{   /* 사용자 제거 */
-    foreach(auto item, ui->clientTreeWidget->findItems(QString::number(id),
-                                                       Qt::MatchFixedString, 2)) {
-        ui->clientTreeWidget->takeTopLevelItem(ui->clientTreeWidget->indexOfTopLevelItem(item));
-    }
-}
 
 /* ContextMenu 슬롯 */
 void ChatServerForm::on_clientTreeWidget_customContextMenuRequested(const QPoint &pos)
