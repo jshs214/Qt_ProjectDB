@@ -106,6 +106,17 @@ void OrderManagerForm::removeItem()
     productKey = index.sibling(index.row(), 2).data().toString().left(5);
     delStock = index.sibling(index.row(), 3).data().toString();
 
+    /* 제품 수량 변경 시, 제품리스트에 있는 재고 반영*/
+    {
+        auto pitem = ui->productTreeWidget->findItems(productKey, Qt::MatchFixedString, 0);
+        foreach(auto i, pitem) {
+            if(productKey == i->text(0)){
+                QString productStock = i->text(3);
+                int result = productStock.toInt() + delStock.toInt();
+                i->setText(3, QString::number(result));
+            }
+        }
+    }
 
     if(index.isValid()) {
         orderModel->removeRow(index.row());
@@ -368,7 +379,6 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         address = ui->addressLineEdit->text();
         sum = ui->sumLineEdit->text();
 
-
         QSqlQuery query(orderModel->database());
 
         // 주문 테이블의 주문 해놓은 재고 뽑음
@@ -377,12 +387,36 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         query.exec();
 
         while (query.next()) {
-            productKey = query.value(0).toString().left(5);
-            orderStock = query.value(1).toString();
+            productKey = query.value(0).toString().left(5); //재고 키값
+            orderStock = query.value(1).toString();         // 입력된 수량 (주문되어있는 재고)
         }
+
+
+        /* 제품 수량 변경 시, 제품리스트에 있는 재고 반영*/
+        {
+            auto pitem = ui->productTreeWidget->findItems(productKey, Qt::MatchFixedString, 0);
+            foreach(auto i, pitem) {
+                if(productKey == i->text(0)){
+                    int result, beInStock;
+                    QString productStock = i->text(3);
+                    result = productStock.toInt() +orderStock.toInt() - ui->stockLineEdit->text().toInt();  //변경 가능한 재고량
+                    beInStock = productStock.toInt() +orderStock.toInt();   //제품리스트의 재고 + 주문되어있는 재고
+
+                    /* 주문변경 가능 수량에 대한 예외처리 */
+                    if( beInStock< ui->stockLineEdit->text().toInt()){
+                        QMessageBox::information(this, tr("Error"),
+                                                 QString(tr("out of stock\nYou can change up to %0."))
+                                                                                    .arg(beInStock));
+                        return;
+                    }
+
+                    i->setText(3, QString::number(result));
+                }
+            }
+        }
+
         /* 재고반영을 위해 키값, 수정할 수량, 입력된 수량을 시그널로 보냄 */
         emit productModKeySent(productKey.toInt(), stock , orderStock);
-        qDebug()<< productKey.toInt() << stock << orderStock;
 
         query.prepare("UPDATE orderList SET client = ?, product = ?, stock = ?,"
                       "price = ?, sum = ?, address = ? WHERE id = ?");

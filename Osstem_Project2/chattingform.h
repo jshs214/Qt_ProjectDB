@@ -25,6 +25,9 @@ public:
     explicit ChattingForm(QWidget *parent = nullptr);
     ~ChattingForm();
 
+    void loadData();
+    void saveData();
+
 private:
     Ui::ChattingForm *ui;
 
@@ -38,6 +41,8 @@ private:
     qint64 totalSize;       // 전체 파일의 크기
     QByteArray outBlock;    // 전송을 위한 데이터
     bool isSent;            // 파일 서버에 접속되었는지 확인
+
+    QHash<QString,QStringList> chattingData;
 
 private slots:
     void receiveData( );		/* 서버에서 데이터가 올 때 */

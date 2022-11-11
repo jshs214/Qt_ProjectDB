@@ -291,10 +291,14 @@ void ChatServerForm::removeClient()
         foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
             item->setText(0, "Off");
             item->setIcon(0, QIcon(":/images/redlight.png"));
+
         }
+        sendChatList();
+
         clientSocketHash.remove(id);
         clientConnection->deleteLater();
     }
+
 }
 
 /* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */
@@ -532,7 +536,6 @@ void ChatServerForm::sendChatList()
         QString id = item->text(2);
         sendArray.append(",");
         sendArray.append(name.toStdString()+"("+id.toStdString()+")");
-
     }
     foreach(QTcpSocket *sock, clientSocketHash.values()) {
         foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()],
