@@ -97,6 +97,7 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->fileButton->setEnabled(true);
 
             loadData();
+
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {       /* Chat Out 버튼 클릭 시 Chat Out */
             /* 프로토콜 생성해서 서버로 전송 */
@@ -109,6 +110,7 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->fileButton->setDisabled(true);
 
             saveData();
+
             ui->message->clear();
         }
     } );
@@ -188,9 +190,9 @@ void ChattingForm::receiveData( )
         ui->sentButton->setEnabled(true);
         ui->fileButton->setEnabled(true);
 
-        chattingData[ui->idLineEdit->text()].append(QString(data)); //채팅데이터를 저장하는 해시에 채팅데이터 저장
+        chattingData.append(QString(data));     //채팅데이터 저장
         break;
-    case Chat_KickOut:  //강퇴 당한 경우
+    case Chat_KickOut:  //강퇴 당한 경우 == chat_out
     {
         /* 프로토콜 생성해서 서버로 전송 */
         sendProtocol(Chat_Out, (ui->nameLineEdit->text().toStdString()+","+
@@ -207,6 +209,7 @@ void ChattingForm::receiveData( )
         sendProtocol(Chat_List,data.toStdString().data());
 
         saveData();     /* 채팅방의 채팅 로그 저장 */
+
         ui->message->clear();
         break;
     }
@@ -229,6 +232,7 @@ void ChattingForm::receiveData( )
         sendProtocol(Chat_List,data.toStdString().data());
 
         loadData();     /* 채팅방의 채팅 로그 불러오기 */
+
         break;
     }
     case Chat_List: // 현재 채팅방 참여인원 전달 받아 상태변경
@@ -261,7 +265,8 @@ void ChattingForm::sendData(  )
         bytearray = str.toUtf8( );
         ui->message->append(tr("Me : ") + str);
         sendProtocol(Chat_Talk, bytearray.data()); // 프로토콜 생성해서 서버로 전송
-        chattingData[ui->idLineEdit->text()].append(tr("Me : ") + str);
+        chattingData.append(tr("Me : ") + str); //채팅데이터 저장
+
     }
 }
 
@@ -377,7 +382,7 @@ void ChattingForm::on_logoutButton_clicked()
 void ChattingForm::savedLoadData()
 {
     /* 불러오는 파일 명은 id,name */
-    QString filename =ui->idLineEdit->text()+ "," + ui->nameLineEdit->text();
+    QString filename =ui->idLineEdit->text()+ "_" + ui->nameLineEdit->text();
 
     QFile file("../data/chattingDB/" + filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text | QIODevice::Truncate))
@@ -387,7 +392,7 @@ void ChattingForm::savedLoadData()
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
-        chattingData[ui->idLineEdit->text()].append(line);
+        chattingData.append(line);
     }
     file.close( );
 }
@@ -396,7 +401,7 @@ void ChattingForm::savedLoadData()
 void ChattingForm::loadData()
 {    
     /* 불러오는 파일 명은 id,name */
-    QString filename =ui->idLineEdit->text()+ "," + ui->nameLineEdit->text();
+    QString filename =ui->idLineEdit->text()+ "_" + ui->nameLineEdit->text();
 
     QFile file("../data/chattingDB/" + filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -415,7 +420,7 @@ void ChattingForm::loadData()
 void ChattingForm::saveData()
 {
     /* 저장되는 파일 명은 id,name */
-    QString filename =ui->idLineEdit->text()+ "," + ui->nameLineEdit->text();
+    QString filename =ui->idLineEdit->text()+ "_" + ui->nameLineEdit->text();
 
     QFile file("../data/chattingDB/" + filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text ))
@@ -423,7 +428,7 @@ void ChattingForm::saveData()
 
     /* 채팅 로그의 데이터를 \n 마다 저장 */
     QTextStream out(&file);
-    for (const auto& v : qAsConst(chattingData[ui->idLineEdit->text()])) {
+    for (const auto& v : qAsConst(chattingData)) {
         out << v <<"\n";
     }
 

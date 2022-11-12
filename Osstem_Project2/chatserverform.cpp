@@ -2,7 +2,6 @@
 #include "ui_chatserverform.h"
 #include "logthread.h"
 
-
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QTcpServer>

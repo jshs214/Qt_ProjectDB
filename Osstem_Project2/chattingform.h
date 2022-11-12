@@ -43,8 +43,7 @@ private:
     QByteArray outBlock;    // 전송을 위한 데이터
     bool isSent;            // 파일 서버에 접속되었는지 확인
 
-    QHash<QString,QStringList> chattingData;    //고객 별 채팅방의 채팅데이터를 저장하는 해시
-
+    QStringList chattingData;   //채팅방의 채팅데이터를 저장하는 해시
 private slots:
     void receiveData( );		/* 서버에서 데이터가 올 때 */
     void sendData( );           /* 서버로 메시지 전송 슬롯 */

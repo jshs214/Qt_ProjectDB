@@ -39,6 +39,18 @@ ClientManagerForm::ClientManagerForm(QWidget *parent) :
 
 }
 
+/* 소멸자에서 DB close */
+ClientManagerForm::~ClientManagerForm()
+{
+    delete ui;
+    /* 고객 DB close  */
+    QSqlDatabase db = QSqlDatabase::database("clientConnection");
+    if(db.isOpen()) {
+        clientModel->submitAll();
+        db.close();
+    }
+}
+
 /* 고객정보 DB의 데이터를 불러오는 메서드 */
 void ClientManagerForm::loadData()
 {
@@ -46,13 +58,13 @@ void ClientManagerForm::loadData()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "clientConnection");
     db.setDatabaseName("client.db");    // DB명은 client.db
     if (db.open()) {
-        QSqlQuery query(db);    // db 를 사용하여 QSqlQuery 객체를 생성
+        QSqlQuery query(db);            // db 를 사용하여 QSqlQuery 객체를 생성
 
         /* SQL 쿼리문을 사용해 고객 테이블 생성 */
         query.exec("CREATE TABLE IF NOT EXISTS clientList(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
                    " phoneNumber VARCHAR(20) NOT NULL, address VARCHAR(50));");
 
-        clientModel = new QSqlTableModel(this, db); // QSqlTableModel을 이용해 모델 객체 생성
+        clientModel = new QSqlTableModel(this, db); // QSqlTableModel을 이용해 고객모델 객체 생성
         clientModel->setTable("clientList");        //모델이 작동하는 DB 테이블 설정
         clientModel->select();                      //모델의 데이터 조회
 
@@ -77,18 +89,6 @@ void ClientManagerForm::loadData()
     }
 }
 
-/* 소멸자에서 DB close */
-ClientManagerForm::~ClientManagerForm()
-{
-    delete ui;
-    /* 고객 DB close  */
-    QSqlDatabase db = QSqlDatabase::database("clientConnection");
-    if(db.isOpen()) {
-        clientModel->submitAll();
-        db.close();
-    }
-}
-
 /* 고객 키값 생성 메서드 */
 int ClientManagerForm::makeId( )
 {
@@ -99,16 +99,6 @@ int ClientManagerForm::makeId( )
         auto id = clientModel->data(clientModel->index(clientModel->rowCount()-1, 0)).toInt();
         return ++id;
     }
-}
-
-/* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
-void ClientManagerForm::on_clearButton_clicked()
-{
-    ui->idLineEdit->clear();
-    ui->nameLineEdit->clear();
-    ui->phoneNumberLineEdit->clear();
-    ui->addressLineEdit->clear();
-    ui->searchLineEdit->clear();
 }
 
 /* ContextMenu 슬롯 */
@@ -168,7 +158,8 @@ void ClientManagerForm::on_modifyPushButton_clicked()
         address = ui->addressLineEdit->text();
 
         QSqlQuery query(clientModel->database());   //QSqlQuery 객체(고객모델)
-        query.prepare("UPDATE clientList SET name = ?, phoneNumber = ?, address = ? WHERE id = ?"); //sql쿼리문 준비
+        query.prepare("UPDATE clientList SET name = ?, phoneNumber = ?,"
+                      " address = ? WHERE id = ?"); //sql쿼리문 준비
         /* sql쿼리문에 값 바인딩 */
         query.bindValue(0, name);
         query.bindValue(1, phoneNumber);
@@ -207,7 +198,7 @@ void ClientManagerForm::on_searchPushButton_clicked()
 {
     QString searchValue = ui->searchLineEdit->text();   //검색할 데이터 저장
 
-    int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
+    int i = ui->searchComboBox->currentIndex();         //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     switch (i){
     case 0: //id 검색
         /* 검색한 데이터와 id가 일치하면 뷰에 검색결과 출력 후 메시지박스 */
@@ -251,8 +242,8 @@ void ClientManagerForm::on_searchPushButton_clicked()
             filterStr += QString("%1);").arg(id);
     }
     clientModel->setFilter(filterStr);
-
 }
+
 /* 고객정보를 담고있는 모델의 모든 데이터 출력 슬롯 */
 void ClientManagerForm::on_statePushButton_clicked()
 {
@@ -270,3 +261,12 @@ void ClientManagerForm::on_clientTableView_clicked(const QModelIndex &index)
     ui->addressLineEdit->setText( index.sibling(index.row(), 3).data().toString() );
 }
 
+/* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
+void ClientManagerForm::on_clearButton_clicked()
+{
+    ui->idLineEdit->clear();
+    ui->nameLineEdit->clear();
+    ui->phoneNumberLineEdit->clear();
+    ui->addressLineEdit->clear();
+    ui->searchLineEdit->clear();
+}
