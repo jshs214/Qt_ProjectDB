@@ -135,8 +135,6 @@ void OrderManagerForm::removeItem()
 /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
 void OrderManagerForm::on_clearButton_clicked()
 {
-    ui->clientTreeWidget->clear();
-    ui->productTreeWidget->clear();
     ui->cIdLineEdit->clear();
     ui->pIdLineEdit->clear();
     ui->stockLineEdit->clear();

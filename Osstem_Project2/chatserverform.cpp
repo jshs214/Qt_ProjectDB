@@ -154,6 +154,7 @@ void ChatServerForm::receiveData( )
 
     ui->ipLineEdit->setText(clientConnection->localAddress().toString());
 
+    auto flag = Qt::MatchFixedString;
     switch(type) {
     case Chat_Login:    // 로그인(서버 접속)   --> 채팅방 입장 위한 정보 저장
     {
@@ -163,7 +164,7 @@ void ChatServerForm::receiveData( )
         QString id = QString(parts[1]);
 
         /* 로그인 성공 시 사용자의 상태 변경*/
-        foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(id, flag, 2)) {
             if(item->text(1) == name){
                 if(item->text(0) != "On") {
                     /* 해시에 데이터 저장 */
@@ -192,7 +193,7 @@ void ChatServerForm::receiveData( )
         QString id = QString(parts[1]);
 
         /* 사용자의 상태 변경*/
-        foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(id, flag, 2)) {
             if(item->text(1) == name){
                 if(item->text(0) != tr("Chat")) {
                     item->setText(0, tr("Chat"));
@@ -218,7 +219,7 @@ void ChatServerForm::receiveData( )
                 /* 현재 채팅 중인 상태의 클라이언트 에게 데이터를 보내줌  */
                 foreach(auto item, ui->clientTreeWidget->
                                     findItems(clientPortIDHash[sock->peerPort()],
-                                                                    Qt::MatchFixedString, 2)) {
+                                                                    flag, 2)) {
                     if(item->text(0) == tr("Chat")){
                         /* 바이너리구조의 데이터스트림 생성, 전송 */
                         QByteArray sendArray;
@@ -264,7 +265,7 @@ void ChatServerForm::receiveData( )
         QString name = QString(parts[0]);
         QString id = QString(parts[1]);
         /* 사용자의 상태 변경 */
-        foreach(auto item, ui->clientTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(id, flag, 2)) {
             if(item->text(1) == name){
                 if(item->text(0) != "On") {
                     item->setText(0, "On");
@@ -273,7 +274,7 @@ void ChatServerForm::receiveData( )
             }
         }
         /* 채팅방의 사용자 목록 상태 변경 */
-        foreach(auto item, ui->chattingTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
+        foreach(auto item, ui->chattingTreeWidget->findItems(id, flag, 2)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget
                                                      ->indexOfTopLevelItem(item));
         }
@@ -285,7 +286,7 @@ void ChatServerForm::receiveData( )
     {
         QString id = clientPortIDHash[port];    //해시에서 id를 가져옴
         /* 사용자의 상태 변경 */
-        foreach(auto item, ui->clientTreeWidget->findItems(receiveData, Qt::MatchFixedString, 1)) {
+        foreach(auto item, ui->clientTreeWidget->findItems(receiveData, flag, 1)) {
             if(item->text(2) == id){
                 if(item->text(0) != "Off") {
                     item->setText(0, "Off");
@@ -298,7 +299,7 @@ void ChatServerForm::receiveData( )
             clientPortIDHash.remove(port);
         }
         /* 채팅방의 사용자 목록 상태 변경 */
-        foreach(auto item, ui->chattingTreeWidget->findItems(id, Qt::MatchFixedString, 2)) {
+        foreach(auto item, ui->chattingTreeWidget->findItems(id, flag, 2)) {
             ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget
                                                      ->indexOfTopLevelItem(item));
         }
@@ -325,7 +326,7 @@ void ChatServerForm::removeClient()
             item->setIcon(0, QIcon(":/images/redlight.png"));
 
         }
-        sendChatList();
+        sendChatList();  /* Chat_List로 현재 채팅방 참여인원 전달 */
 
         clientSocketHash.remove(id);
         clientConnection->deleteLater();
@@ -401,17 +402,6 @@ void ChatServerForm::kickOut()
         ui->chattingTreeWidget->takeTopLevelItem(ui->chattingTreeWidget
                                                  ->indexOfTopLevelItem(item));
     }
-}
-
-/* 로그인 성공 유무를 보내는 메서드 */
-void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
-{
-    /* 바이너리구조의 데이터스트림 생성, 소켓에 보낼 데이터를 채워 전송 */
-    QByteArray sendArray;
-    QDataStream out(&sendArray, QIODevice::WriteOnly);
-    out << Chat_Login;
-    out.writeRawData(data, 1020);
-    sock->write(sendArray);
 }
 
 
@@ -532,6 +522,18 @@ void ChatServerForm::on_sendButton_clicked()
 
     ui->inputLineEdit->clear();
 }
+
+/* 로그인 성공 유무를 보내는 메서드 */
+void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
+{
+    /* 바이너리구조의 데이터스트림 생성, 소켓에 보낼 데이터를 채워 전송 */
+    QByteArray sendArray;
+    QDataStream out(&sendArray, QIODevice::WriteOnly);
+    out << Chat_Login;
+    out.writeRawData(data, 1020);
+    sock->write(sendArray);
+}
+
 
 /* Chat_List로 현재 채팅방 참여인원 전달 */
 void ChatServerForm::sendChatList()

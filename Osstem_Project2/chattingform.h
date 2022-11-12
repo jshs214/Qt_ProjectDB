@@ -25,9 +25,9 @@ public:
     explicit ChattingForm(QWidget *parent = nullptr);
     ~ChattingForm();
 
-    void savedLoadData();
-    void loadData();
-    void saveData();
+    void savedLoadData();   /* 프로그램 시작 전, 저장되었던 기존 채팅방의 채팅 로그 불러오기 */
+    void loadData();        /* 채팅방의 채팅 로그 불러오기 */
+    void saveData();        /* 채팅방의 채팅 로그 저장 */
 
 private:
     Ui::ChattingForm *ui;
@@ -43,7 +43,7 @@ private:
     QByteArray outBlock;    // 전송을 위한 데이터
     bool isSent;            // 파일 서버에 접속되었는지 확인
 
-    QHash<QString,QStringList> chattingData;
+    QHash<QString,QStringList> chattingData;    //고객 별 채팅방의 채팅데이터를 저장하는 해시
 
 private slots:
     void receiveData( );		/* 서버에서 데이터가 올 때 */

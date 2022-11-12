@@ -52,8 +52,8 @@ static const qt_meta_stringdata_ClientManagerForm_t qt_meta_stringdata_ClientMan
         QT_MOC_LITERAL(36, 16),  // "clientDelToOrder"
         QT_MOC_LITERAL(53, 16),  // "clientModToOrder"
         QT_MOC_LITERAL(70, 17),  // "clientAddToServer"
-        QT_MOC_LITERAL(88, 17),  // "clientModToServer"
-        QT_MOC_LITERAL(106, 17),  // "clientRevToServer"
+        QT_MOC_LITERAL(88, 17),  // "clientRevToServer"
+        QT_MOC_LITERAL(106, 17),  // "clientModToServer"
         QT_MOC_LITERAL(124, 22),  // "on_clearButton_clicked"
         QT_MOC_LITERAL(147, 15),  // "showContextMenu"
         QT_MOC_LITERAL(163, 24),  // "on_addPushButton_clicked"
@@ -71,8 +71,8 @@ static const qt_meta_stringdata_ClientManagerForm_t qt_meta_stringdata_ClientMan
     "clientDelToOrder",
     "clientModToOrder",
     "clientAddToServer",
-    "clientModToServer",
     "clientRevToServer",
+    "clientModToServer",
     "on_clearButton_clicked",
     "showContextMenu",
     "on_addPushButton_clicked",
@@ -104,8 +104,8 @@ static const uint qt_meta_data_ClientManagerForm[] = {
        3,    1,  107,    2, 0x06,    6 /* Public */,
        4,    4,  110,    2, 0x06,    8 /* Public */,
        5,    2,  119,    2, 0x06,   13 /* Public */,
-       6,    2,  124,    2, 0x06,   16 /* Public */,
-       7,    1,  129,    2, 0x06,   19 /* Public */,
+       6,    1,  124,    2, 0x06,   16 /* Public */,
+       7,    2,  127,    2, 0x06,   18 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
        8,    0,  132,    2, 0x08,   21 /* Private */,
@@ -122,8 +122,8 @@ static const uint qt_meta_data_ClientManagerForm[] = {
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QString, QMetaType::QString,    2,    2,    2,    2,
     QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
-    QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
     QMetaType::Void, QMetaType::Int,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
 
  // slots: parameters
     QMetaType::Void,
@@ -148,8 +148,8 @@ void ClientManagerForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
         case 1: _t->clientDelToOrder((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 2: _t->clientModToOrder((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[4]))); break;
         case 3: _t->clientAddToServer((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
-        case 4: _t->clientModToServer((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
-        case 5: _t->clientRevToServer((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 4: _t->clientRevToServer((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 5: _t->clientModToServer((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
         case 6: _t->on_clearButton_clicked(); break;
         case 7: _t->showContextMenu((*reinterpret_cast< std::add_pointer_t<QPoint>>(_a[1]))); break;
         case 8: _t->on_addPushButton_clicked(); break;
@@ -191,15 +191,15 @@ void ClientManagerForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, in
             }
         }
         {
-            using _t = void (ClientManagerForm::*)(int , QString );
-            if (_t _q_method = &ClientManagerForm::clientModToServer; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+            using _t = void (ClientManagerForm::*)(int );
+            if (_t _q_method = &ClientManagerForm::clientRevToServer; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 4;
                 return;
             }
         }
         {
-            using _t = void (ClientManagerForm::*)(int );
-            if (_t _q_method = &ClientManagerForm::clientRevToServer; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+            using _t = void (ClientManagerForm::*)(int , QString );
+            if (_t _q_method = &ClientManagerForm::clientModToServer; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 5;
                 return;
             }
@@ -214,7 +214,7 @@ const QMetaObject ClientManagerForm::staticMetaObject = { {
     qt_static_metacall,
     nullptr,
 qt_incomplete_metaTypeArray<qt_meta_stringdata_ClientManagerForm_t
-, QtPrivate::TypeAndForceComplete<ClientManagerForm, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>
+, QtPrivate::TypeAndForceComplete<ClientManagerForm, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<int, std::false_type>, QtPrivate::TypeAndForceComplete<QString, std::false_type>
 , QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QPoint &, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<const QModelIndex &, std::false_type>
 
 
@@ -282,16 +282,16 @@ void ClientManagerForm::clientAddToServer(int _t1, QString _t2)
 }
 
 // SIGNAL 4
-void ClientManagerForm::clientModToServer(int _t1, QString _t2)
+void ClientManagerForm::clientRevToServer(int _t1)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 4, _a);
 }
 
 // SIGNAL 5
-void ClientManagerForm::clientRevToServer(int _t1)
+void ClientManagerForm::clientModToServer(int _t1, QString _t2)
 {
-    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
     QMetaObject::activate(this, &staticMetaObject, 5, _a);
 }
 QT_WARNING_POP
