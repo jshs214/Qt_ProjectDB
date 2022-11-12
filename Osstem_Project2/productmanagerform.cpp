@@ -59,7 +59,7 @@ void ProductManagerForm::loadData()
         QSqlQuery query(db);            // db 를 사용하여 QSqlQuery 객체를 생성
         /* SQL 쿼리문을 사용해 제품 테이블 생성 */
         query.exec("CREATE TABLE IF NOT EXISTS productList(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
-                   " price VARCHAR(20) NOT NULL, stock VARCHAR(50));");
+                   " price VARCHAR(20) NOT NULL, stock VARCHAR(20), type VARCHAR(20));");
 
         productModel = new QSqlTableModel(this,db); //QSqlTableModel을 이용해 고객모델 객체 생성
         productModel->setTable("productList");      //모델이 작동하는 DB 테이블 설정
@@ -70,6 +70,7 @@ void ProductManagerForm::loadData()
         productModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
         productModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Price"));
         productModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Stock"));
+        productModel->setHeaderData(4, Qt::Horizontal, QObject::tr("Type"));
 
         ui->productTableView->setModel(productModel);   //ui에 표시할 모델 설정
 
@@ -116,28 +117,30 @@ void ProductManagerForm::on_clearButton_clicked()
     ui->priceLineEdit->clear();
     ui->stockLineEdit->clear();
     ui->searchLineEdit->clear();
+    ui->typeLineEdit->clear();
 }
 
 /* 제품정보추가를 위한 슬롯 */
 void ProductManagerForm::on_addPushButton_clicked()
 {
     /* 추가 시 변수에 입력했던 id, 이름, 전화번호, 주소의 데이터 저장 */
-    QString name, price, stock;
+    QString name, price, stock, type;
     int id = makeId( );
     ui->idLineEdit->setText(QString::number(id));
     name = ui->nameLineEdit->text();
     price = ui->priceLineEdit->text();
     stock = ui->stockLineEdit->text();
-
+    type = ui->typeLineEdit->text();
     /* 추가할 제품의 정보를 다 입력하면 제품 정보추가 */
     if(name.length() && price.length() && stock.length()) {
         QSqlQuery query(productModel->database());  //QSqlQuery 객체(제품모델)
-        query.prepare("INSERT INTO productList VALUES (?, ?, ?, ?)");       //sql쿼리문 준비
+        query.prepare("INSERT INTO productList VALUES (?, ?, ?, ?, ?)");       //sql쿼리문 준비
         /* sql쿼리문에 값 바인딩 */
         query.bindValue(0, id);
         query.bindValue(1, name);
         query.bindValue(2, price);
         query.bindValue(3, stock);
+        query.bindValue(4, type);
 
         query.exec();              //sql쿼리문 실행
         productModel->select();    //모델의 데이터 조회
@@ -151,6 +154,7 @@ void ProductManagerForm::on_addPushButton_clicked()
     ui->nameLineEdit->clear();
     ui->priceLineEdit->clear();
     ui->stockLineEdit->clear();
+    ui->typeLineEdit->clear();
 }
 
 /* 제품정보변경을 위한 슬롯 */
@@ -161,19 +165,22 @@ void ProductManagerForm::on_modifyPushButton_clicked()
     if(index.isValid()) {
         /* id는 모델의 현재 데이터값, QString 변수는 변경 할 이름, 가격, 수량의 데이터 저장 */
         int id = productModel->data(index.siblingAtColumn(0)).toInt();
-        QString name, price, stock;
+        QString name, price, stock, type;
         name = ui->nameLineEdit->text();
         price = ui->priceLineEdit->text();
         stock = ui->stockLineEdit->text();
+        type = ui->typeLineEdit->text();
 
         QSqlQuery query(productModel->database());  //QSqlQuery 객체(제품모델)
         query.prepare("UPDATE productList SET name = ?,"
-                      " price = ?, stock = ? WHERE id = ?");     //sql쿼리문 준비
+                      " price = ?, stock = ?, type = ? WHERE id = ?");     //sql쿼리문 준비
         /* sql쿼리문에 값 바인딩 */
         query.bindValue(0, name);
         query.bindValue(1, price);
         query.bindValue(2, stock);
-        query.bindValue(3, id);
+        query.bindValue(3, type);
+        query.bindValue(4, id);
+
         query.exec();               //sql 쿼리 실행
         productModel->select();     //모델의 데이터 조회
 
@@ -234,6 +241,13 @@ void ProductManagerForm::on_searchPushButton_clicked()
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(productModel->rowCount()));
         break;
+    case 4: //타입 검색
+        /* 검색한 데이터에 수량이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        productModel->setFilter(QString("type LIKE '%%1%'").arg(searchValue));
+        productModel->select();
+        QMessageBox::information(this, tr("Search Info"),
+                                 QString( tr("%1 search results were found") ).arg(productModel->rowCount()));
+        break;
     default:
         break;
     }
@@ -258,6 +272,7 @@ void ProductManagerForm::on_productTableView_clicked(const QModelIndex &index)
     ui->nameLineEdit->setText( index.sibling(index.row(), 1).data().toString() );
     ui->priceLineEdit->setText( index.sibling(index.row(), 2).data().toString() );
     ui->stockLineEdit->setText( index.sibling(index.row(), 3).data().toString() );
+    ui->typeLineEdit->setText( index.sibling(index.row(), 4).data().toString() );
 }
 
 /* 제품정보를 담고있는 모델의 모든 데이터 출력 슬롯 */
@@ -273,7 +288,6 @@ void ProductManagerForm::receiveAddStock(int key, QString inStock) //id, 주문�
     QSqlQuery query(productModel->database());  //QSqlQuery 객체(제품모델)
     int stock, result;  //기존수량, 반영할 재고수량
 
-
     query.prepare("SELECT stock FROM productList WHERE id = ?");    //sql쿼리문 준비
     query.bindValue(0, key);    //sql쿼리문에 값 바인딩
     query.exec();               //sql 쿼리 실행
@@ -287,7 +301,7 @@ void ProductManagerForm::receiveAddStock(int key, QString inStock) //id, 주문�
     if(stock < inStock.toInt()) {
         QMessageBox::information(this, tr("Error"),
                                  QString( tr("out of stock\nYou can order up to %0.") )
-                                                                    .arg(stock));
+                                 .arg(stock));
         return;
     }
 
@@ -298,7 +312,6 @@ void ProductManagerForm::receiveAddStock(int key, QString inStock) //id, 주문�
 
     query.exec();               //sql 쿼리 실행
     productModel->select();     //모델의 데이터 조회
-
 }
 
 /* Order에서 주문변경 시, 재고반영을 위한 슬롯 */

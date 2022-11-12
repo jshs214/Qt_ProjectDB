@@ -11,6 +11,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QStandardItemModel>
 
 OrderManagerForm::OrderManagerForm(QWidget *parent) :
     QWidget(parent),
@@ -37,13 +38,6 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     connect(ui->clientLineEdit, SIGNAL(returnPressed()), this, SLOT(on_clientButton_clicked()));
     connect(ui->productLineEdit, SIGNAL(returnPressed()), this, SLOT(on_productButton_clicked()));
 
-    /* ui의 트리위젯들의 열 너비 설정 */
-    ui->clientTreeWidget->QTreeView::setColumnWidth(0,40);
-    ui->clientTreeWidget->QTreeView::setColumnWidth(1,70);
-    ui->clientTreeWidget->QTreeView::setColumnWidth(2,95);
-    ui->productTreeWidget->QTreeView::setColumnWidth(0,40);
-    ui->productTreeWidget->QTreeView::setColumnWidth(1,70);
-    ui->productTreeWidget->QTreeView::setColumnWidth(2,95);
 }
 
 
@@ -76,6 +70,21 @@ void OrderManagerForm::loadData()
         orderModel = new QSqlTableModel(this, db);  // QSqlTableModel을 이용해 주문모델 객체 생성
         orderModel->setTable("orderList");          //모델이 작동하는 DB 테이블 설정
         orderModel->select();                       //모델의 데이터 조회
+
+        clientItemModel = new QStandardItemModel(0, 3);
+        clientItemModel->setHeaderData(0, Qt::Horizontal, tr("ID"));
+        clientItemModel->setHeaderData(1, Qt::Horizontal, tr("Name"));
+        clientItemModel->setHeaderData(2, Qt::Horizontal, tr("Address"));
+        ui->clientTreeView->setModel(clientItemModel);
+        ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+        productItemModel = new QStandardItemModel(0, 4);
+        productItemModel->setHeaderData(0, Qt::Horizontal, tr("ID"));
+        productItemModel->setHeaderData(1, Qt::Horizontal, tr("Name"));
+        productItemModel->setHeaderData(2, Qt::Horizontal, tr("price"));
+        productItemModel->setHeaderData(3, Qt::Horizontal, tr("stock"));
+        ui->productTreeView->setModel(productItemModel);
+        ui->productTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
         /* DB 테이블 헤더 명 설정 */
         orderModel->setHeaderData(0, Qt::Horizontal, QObject::tr("OrderNum"));
@@ -129,43 +138,39 @@ void OrderManagerForm::on_clearButton_clicked()
 void OrderManagerForm::updateClient(int id, QString name,
                                     QString phoneNumber, QString address)   //고객id, 이름, 전화번호, 주소
 {
-    QTreeWidgetItem* cItem = new QTreeWidgetItem(ui->clientTreeWidget);
-    cItem->setText(0,QString::number(id));
-    cItem->setText(1,name);
-    cItem->setText(2,phoneNumber);
-    cItem->setText(3,address);
+    Q_UNUSED(phoneNumber);
+    QStringList strings;
+    strings << QString::number(id) << name << address;
+
+    QList<QStandardItem*> items;
+    for (int i = 0; i < 3; i++) {
+        items.append(new QStandardItem(strings.at(i)));
+    }
+    clientItemModel->appendRow(items);
 }
 
 /* 고객정보 데이터 제거 */
 void OrderManagerForm::delClient(int id)    //고객 id
 {
-    /* 고객트리위젯에서 id와 일치하는지 찾음  */
-    auto item = ui->clientTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);
-    /* id 가일치한다면 트리위젯의 지정된 인덱스 에서 항목 제거 */
-    foreach(auto i, item) {
-        if(QString::number(id) == i->text(0))
-            ui->clientTreeWidget->takeTopLevelItem(ui->clientTreeWidget
-                                                   ->indexOfTopLevelItem(i));
-        delete i;
+    /* 고객아이템모델에서 id와 일치하는 index를 찾음  */
+    QModelIndexList index = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
+                                                   id, -1, Qt::MatchFlags(Qt::MatchFixedString));
+
+    foreach(auto ix, index) {
+        clientItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
+        ui->clientTreeView->update();                //뷰 update
     }
-
-
 }
 
 /* 고객정보 데이터 변경 */
 void OrderManagerForm::modClient(int id, QString name,
                                  QString phoneNumber, QString address)  //고객id, 이름, 전화번호, 주소
 {
-    /* 고객트리위젯에서 id와 일치하는지 찾음  */
-    auto item = ui->clientTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);        //키값비교, 0
-    /* id 가일치한다면 지정된 인덱스 의 데이터 변경 */
-    foreach(auto i, item) {
-        if(QString::number(id) == i->text(0)){
-            i->setText(0, QString::number(id));
-            i->setText(1, name);
-            i->setText(2, phoneNumber);
-            i->setText(3, address);
-        }
+    QModelIndexList index = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
+                                                   id, -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, index) {
+        clientItemModel->setItem(ix.row(), 1, new QStandardItem(name));
+        clientItemModel->setItem(ix.row(), 2, new QStandardItem(address));
     }
 }
 
@@ -173,40 +178,38 @@ void OrderManagerForm::modClient(int id, QString name,
 void OrderManagerForm::updateProduct(int id, QString name,
                                      QString price, QString stock)  //제품id, 이름, 가격, 수량
 {
-    QTreeWidgetItem* pItem = new QTreeWidgetItem(ui->productTreeWidget);
-    pItem->setText(0,QString::number(id));
-    pItem->setText(1,name);
-    pItem->setText(2,price);
-    pItem->setText(3,stock);
+    QStringList strings;
+    strings << QString::number(id) << name << price << stock;
+
+    QList<QStandardItem*> items;
+    for (int i = 0; i < 4; i++) {
+        items.append(new QStandardItem(strings.at(i)));
+    }
+    productItemModel->appendRow(items);
 }
 
 /* 제품정보 데이터 제거 */
 void OrderManagerForm::delProduct(int id)
 {
-    /* 제품트리위젯에서 id와 일치하는지 찾음  */
-    auto item = ui->productTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);
-    /* id 가일치한다면 트리위젯의 지정된 인덱스 에서 항목 제거 */
-    foreach(auto i, item) {
-        if(QString::number(id) == i->text(0))
-            ui->productTreeWidget->takeTopLevelItem(ui->productTreeWidget->indexOfTopLevelItem(i));
-        delete i;
-    }
+    /* 제품아이템모델에서 id와 일치하는 index를 찾음  */
+    QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                    id, -1, Qt::MatchFlags(Qt::MatchFixedString));
 
+    foreach(auto ix, index) {
+        productItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
+        ui->productTreeView->update();                //뷰 update
+    }
 }
 
 /* 제품정보 데이터 변경 */
 void OrderManagerForm::modProduct(int id, QString name, QString price, QString stock)
 {
-    /* 제품트리위젯에서 id와 일치하는지 찾음  */
-    auto item = ui->productTreeWidget->findItems(QString::number(id), Qt::MatchFixedString, 0);        //키값비교, 0
-    /* id 가일치한다면 지정된 인덱스 의 데이터 변경 */
-    foreach(auto i, item) {
-        if(QString::number(id) == i->text(0)){
-            i->setText(0, QString::number(id));
-            i->setText(1, name);
-            i->setText(2, price);
-            i->setText(3, stock);
-        }
+    QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                    id, -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, index) {
+        productItemModel->setItem(ix.row(), 1, new QStandardItem(name));
+        productItemModel->setItem(ix.row(), 2, new QStandardItem(price));
+        productItemModel->setItem(ix.row(), 3, new QStandardItem(stock));
     }
 }
 
@@ -214,82 +217,91 @@ void OrderManagerForm::modProduct(int id, QString name, QString price, QString s
 void OrderManagerForm::on_clientButton_clicked()
 {
     QString str = ui->clientLineEdit->text();
-    auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
+    QModelIndexList idindex = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
+                                                     str, -1, Qt::MatchFlags(Qt::MatchFixedString));
+    QModelIndexList nameindex = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
+                                                       str, -1, Qt::MatchFlags(Qt::MatchFixedString));
 
-    /* 검색 시, 고객 트리위젯의 모든 데이터 hidden */
-    for(int i =0; i < ui->clientTreeWidget->topLevelItemCount() ; i++)
-    {
-        ui->clientTreeWidget->topLevelItem(i)->setHidden(true);
+
+    for(int i=0 ; i< clientItemModel->rowCount(); i++){
     }
 
-    /* id 검색 시, 검색값과 id가 완전일치 하면 위젯에 출력 */
-    auto cItem = ui->clientTreeWidget->findItems(str, Qt::MatchFixedString, 0); //id 는 완전일치
-    foreach(auto i, cItem) {
-        i->setHidden(false);
+    foreach(auto ix, idindex) {
+
     }
-    /* 이름 검색 시, 검색값과 이름이 부분일치 하면 위젯에 출력 */
-    cItem = ui->clientTreeWidget->findItems(str, flag, 1);
-    foreach(auto i, cItem) {
-        i->setHidden(false);
-    }
+
+    //    /* 검색 시, 고객 트리위젯의 모든 데이터 hidden */
+    //    for(int i =0; i < ui->clientTreeWidget->topLevelItemCount() ; i++)
+    //    {
+    //        ui->clientTreeWidget->topLevelItem(i)->setHidden(true);
+    //    }
+
+    //    /* id 검색 시, 검색값과 id가 완전일치 하면 위젯에 출력 */
+    //    auto cItem = ui->clientTreeWidget->findItems(str, Qt::MatchFixedString, 0); //id 는 완전일치
+    //    foreach(auto i, cItem) {
+    //        i->setHidden(false);
+    //    }
+    //    /* 이름 검색 시, 검색값과 이름이 부분일치 하면 위젯에 출력 */
+    //    cItem = ui->clientTreeWidget->findItems(str, flag, 1);
+    //    foreach(auto i, cItem) {
+    //        i->setHidden(false);
+    //    }
 
 }
 
 /* 제품 id나 이름 검색하는 슬롯 */
 void OrderManagerForm::on_productButton_clicked()
 {
-    QString str = ui->productLineEdit->text();
-    auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
+    //    QString str = ui->productLineEdit->text();
+    //    auto flag =  Qt::MatchCaseSensitive|Qt::MatchContains;
 
-    /* 검색 시, 제품 트리위젯의 모든 데이터 hidden */
-    for(int i =0; i < ui->productTreeWidget->topLevelItemCount() ; i++)
-    {
-        ui->productTreeWidget->topLevelItem(i)->setHidden(true);
-    }
+    //    /* 검색 시, 제품 트리위젯의 모든 데이터 hidden */
+    //    for(int i =0; i < ui->productTreeWidget->topLevelItemCount() ; i++)
+    //    {
+    //        ui->productTreeWidget->topLevelItem(i)->setHidden(true);
+    //    }
 
-    /* id 검색 시, 검색값과 id가 완전일치 하면 위젯에 출력 */
-    auto pItem = ui->productTreeWidget->findItems(str, Qt::MatchFixedString, 0); //id 는 완전일치
-    foreach(auto i, pItem) {
-        i->setHidden(false);
-    }
+    //    /* id 검색 시, 검색값과 id가 완전일치 하면 위젯에 출력 */
+    //    auto pItem = ui->productTreeWidget->findItems(str, Qt::MatchFixedString, 0); //id 는 완전일치
+    //    foreach(auto i, pItem) {
+    //        i->setHidden(false);
+    //    }
 
-    /* 이름 검색 시, 검색값과 제품명이 부분일치 하면 위젯에 출력 */
-    pItem = ui->productTreeWidget->findItems(str, flag, 1);
-    foreach(auto i, pItem) {
-        i->setHidden(false);
-    }
+    //    /* 이름 검색 시, 검색값과 제품명이 부분일치 하면 위젯에 출력 */
+    //    pItem = ui->productTreeWidget->findItems(str, flag, 1);
+    //    foreach(auto i, pItem) {
+    //        i->setHidden(false);
+    //    }
 }
 
 /* 고객 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
-void OrderManagerForm::on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
+void OrderManagerForm::on_clientTreeView_clicked(const QModelIndex &index)
 {
-    Q_UNUSED(column);
-    ui->idLineEdit->clear();
     QString client;
-    client = item->text(0)+" ("+item->text(1)+")";
+    client = index.sibling(index.row(), 0).data().toString() + "(" +
+            index.sibling(index.row(), 1).data().toString() + ")";
 
     ui->cIdLineEdit->setText(client);
-    ui->addressLineEdit->setText(item->text(3));
+    ui->addressLineEdit->setText(index.sibling(index.row(), 2).data().toString() );
 }
 
 /* 제품 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
-void OrderManagerForm::on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column)
+void OrderManagerForm::on_productTreeView_clicked(const QModelIndex &index)
 {
-    Q_UNUSED(column);
-    ui->idLineEdit->clear();
-    ui->stockLineEdit->clear();
     QString product;
-    product = item->text(0)+" ("+item->text(1)+")";
+    product = index.sibling(index.row(), 0).data().toString() + "(" +
+            index.sibling(index.row(), 1).data().toString() + ")";
 
     ui->pIdLineEdit->setText(product);
-    ui->priceLineEdit->setText(item->text(2));
+    ui->priceLineEdit->setText(index.sibling(index.row(), 2).data().toString() );
 }
 
 /* 주문 정보 추가 */
 void OrderManagerForm::on_addPushButton_clicked()
 {
-    QTreeWidgetItem* pItem = ui->productTreeWidget->currentItem();
-
+    auto flag = Qt::MatchFixedString;
+    QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                    ui->pIdLineEdit->text().left(5), -1, Qt::MatchFlags(flag));
     QString  client, product, stock, price, address, sum;
     QString productKey, productTree_Stock;  //제품id, 주문 수량
 
@@ -303,20 +315,24 @@ void OrderManagerForm::on_addPushButton_clicked()
     address = ui->addressLineEdit->text();
     sum = ui->sumLineEdit->text();
 
-    productTree_Stock = pItem->text(3);              //제품리스트의 재고
+    foreach(auto ix, index) {
+        productTree_Stock = productItemModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
+    }
+
     productKey =  ui->pIdLineEdit->text().left(5);   //제품 id
 
     /* 재고반영을 위한 시그널 */
     emit productAddKeySent(productKey.toInt(), stock ); //제품id, 주문수량
-
-    if(pItem == nullptr) return; // 예외
 
     /* 주문 수량이 재고보다 많을 경우 예외 */
     if(productTree_Stock.toInt() < ui->stockLineEdit->text().toInt()) return;
 
     /* 주문이 되면 제품리스트의 재고를 변경 */
     QString result_stock = QString::number(productTree_Stock.toInt() - stock.toInt());
-    pItem->setText((3), result_stock);
+
+    foreach(auto ix, index) {
+        productItemModel->setItem(ix.row(), 3, new QStandardItem(result_stock));
+    }
 
     /* 주문 할 데이터를 다 입력, 재고>=주문수량이면 주문정보 추가 */
     if( client.length() && product.length() && stock.length() &&price.length() && address.length()
@@ -350,7 +366,6 @@ void OrderManagerForm::on_addPushButton_clicked()
 /* 주문 정보 변경 */
 void OrderManagerForm::on_modifyPushButton_clicked()
 {
-
     QModelIndex index = ui->orderTableView->currentIndex();
     if(index.isValid()) {
         QString client, product, stock, price, address, sum;
@@ -378,28 +393,24 @@ void OrderManagerForm::on_modifyPushButton_clicked()
             orderStock = query.value(1).toString();         // 입력된 수량 (주문되어있는 재고)
         }
 
-
-        /* 제품 수량 변경 시, 제품리스트에 있는 재고 반영*/
-        {
-            /* 주문 변경 시, 제품id가 일치하는 제품리스트의 재고 변경 */
-            auto pitem = ui->productTreeWidget->findItems(productKey, Qt::MatchFixedString, 0);
-            foreach(auto i, pitem) {
-                if(productKey == i->text(0)){
-                    int result, beInStock;
-                    QString productStock = i->text(3);
-                    result = productStock.toInt() +orderStock.toInt() - ui->stockLineEdit->text().toInt();  //변경 가능한 재고량
-                    beInStock = productStock.toInt() +orderStock.toInt();   //제품리스트의 재고 + 주문되어있는 재고
-
-                    /* 주문변경 가능 수량에 대한 예외처리 */
-                    if( beInStock< ui->stockLineEdit->text().toInt()){
-                        QMessageBox::information(this, tr("Error"),
-                                                 QString(tr("out of stock\nYou can change up to %0."))
-                                                 .arg(beInStock));
-                        return;
-                    }
-                    i->setText(3, QString::number(result));
-                }
+        /* 주문 변경 시, 제품id가 일치하는 제품리스트의 재고 변경 */
+        QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                        ui->pIdLineEdit->text().left(5), -1, Qt::MatchFlags(Qt::MatchFixedString));
+        foreach(auto ix, index) {
+            int result, beInStock;
+            QString productStock = productItemModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
+            result = productStock.toInt() +orderStock.toInt() - ui->stockLineEdit->text().toInt();  //변경 가능한 재고량
+            beInStock = productStock.toInt() +orderStock.toInt();   //제품리스트의 재고 + 주문되어있는 재고
+            qDebug()<<productStock << result << beInStock;
+            /* 주문변경 가능 수량에 대한 예외처리 */
+            if( beInStock< ui->stockLineEdit->text().toInt()){
+                QMessageBox::information(this, tr("Error"),
+                                         QString(tr("out of stock\nYou can change up to %0."))
+                                         .arg(beInStock));
+                return;
             }
+            productItemModel->setItem(ix.row(), 3, new QStandardItem(QString::number(result)));
+
         }
 
         /* 주문변경 시 재고반영을 위한 시그널 */
@@ -425,23 +436,22 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 /* 주문 정보 제거 */
 void OrderManagerForm::removeItem()
 {
-    QString productKey, delStock;   //제품id, 주문제거한 수량
+    QString productKey, productStock ,delStock;   //제품id, 주문제거한 수량
+    int result; //반영할 재고량
 
     QModelIndex index = ui->orderTableView->currentIndex();
+
     productKey = index.sibling(index.row(), 2).data().toString().left(5);
     delStock = index.sibling(index.row(), 3).data().toString();
 
-    /* 제품 수량 변경 시, 제품리스트에 있는 재고 반영*/
-    {
-        /* 주문 삭제 시, 제품id가 일치하는 제품리스트의 재고에 추가 */
-        auto pitem = ui->productTreeWidget->findItems(productKey, Qt::MatchFixedString, 0);
-        foreach(auto i, pitem) {
-            if(productKey == i->text(0)){
-                QString productStock = i->text(3);
-                int result = productStock.toInt() + delStock.toInt();
-                i->setText(3, QString::number(result));
-            }
-        }
+    QModelIndexList indexes = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                      productKey, -1, Qt::MatchFlags(Qt::MatchFixedString));
+
+    foreach(auto ix, indexes) {
+        productStock = productItemModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
+        result = productStock.toInt() + delStock.toInt();
+        qDebug()<<productStock<<result;
+        productItemModel->setItem(ix.row(), 3, new QStandardItem(QString::number(result)));
     }
 
     if(index.isValid()) {
@@ -525,4 +535,6 @@ void OrderManagerForm::on_statePushButton_clicked()
     orderModel->setFilter("");
     orderModel->select();
 }
+
+
 

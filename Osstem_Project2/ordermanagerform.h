@@ -7,6 +7,7 @@
 class QMenu;
 class QTreeWidgetItem;
 class QSqlTableModel;
+class QStandardItemModel;
 
 namespace Ui {
 class OrderManagerForm;
@@ -27,6 +28,10 @@ private:
     QMenu* menu;    //ContextMenu를 위한 메뉴
     Ui::OrderManagerForm *ui;
     QSqlTableModel *orderModel;     //주문모델 객체
+    QStandardItemModel *clientItemModel;
+    QStandardItemModel *productItemModel;
+    QStandardItemModel *searchClientModel;
+    QStandardItemModel *searchProductModel;
 
 signals:
     /* 재고반영을 위한 시그널  */
@@ -52,10 +57,9 @@ private slots:
     /*고객, 제품 id나 이름 검색하는 슬롯 */
     void on_clientButton_clicked();     //고객
     void on_productButton_clicked();    //제품
-
     /* 고객, 제품 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
-    void on_clientTreeWidget_itemClicked(QTreeWidgetItem *item, int column);    //고객
-    void on_productTreeWidget_itemClicked(QTreeWidgetItem *item, int column);   //제품
+    void on_clientTreeView_clicked(const QModelIndex &index);
+    void on_productTreeView_clicked(const QModelIndex &index);
 
     void on_addPushButton_clicked();    /* 주문 정보 추가 */
     void on_modifyPushButton_clicked(); /* 주문 정보 변경 */
@@ -65,6 +69,8 @@ private slots:
 
     void on_orderTableView_clicked(const QModelIndex &index);   /* 등록된 주문정보 클릭 시 관련정보 출력 슬롯 */
     void on_statePushButton_clicked();                          /* 주문정보를 담고있는 모델의 모든 데이터 출력 슬롯 */
+
+
 };
 
 #endif // ORDERMANAGERFORM_H

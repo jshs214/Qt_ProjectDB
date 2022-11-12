@@ -62,57 +62,29 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QTreeWidget" name="clientTreeWidget">
+          <widget class="QTreeView" name="clientTreeView">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
            <property name="rootIsDecorated">
             <bool>false</bool>
            </property>
-           <column>
-            <property name="text">
-             <string>ID</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Phone Number</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Address</string>
-            </property>
-           </column>
+           <attribute name="headerVisible">
+            <bool>true</bool>
+           </attribute>
           </widget>
          </item>
          <item>
-          <widget class="QTreeWidget" name="productTreeWidget">
+          <widget class="QTreeView" name="productTreeView">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
            <property name="rootIsDecorated">
             <bool>false</bool>
            </property>
-           <column>
-            <property name="text">
-             <string>ID</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Price</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Stock</string>
-            </property>
-           </column>
+           <attribute name="headerVisible">
+            <bool>true</bool>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -361,6 +333,29 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>clientLineEdit</tabstop>
+  <tabstop>clientButton</tabstop>
+  <tabstop>productLineEdit</tabstop>
+  <tabstop>productButton</tabstop>
+  <tabstop>clientTreeView</tabstop>
+  <tabstop>productTreeView</tabstop>
+  <tabstop>idLineEdit</tabstop>
+  <tabstop>cIdLineEdit</tabstop>
+  <tabstop>pIdLineEdit</tabstop>
+  <tabstop>stockLineEdit</tabstop>
+  <tabstop>addressLineEdit</tabstop>
+  <tabstop>priceLineEdit</tabstop>
+  <tabstop>sumLineEdit</tabstop>
+  <tabstop>addPushButton</tabstop>
+  <tabstop>modifyPushButton</tabstop>
+  <tabstop>clearButton</tabstop>
+  <tabstop>searchComboBox</tabstop>
+  <tabstop>searchLineEdit</tabstop>
+  <tabstop>searchPushButton</tabstop>
+  <tabstop>statePushButton</tabstop>
+  <tabstop>orderTableView</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

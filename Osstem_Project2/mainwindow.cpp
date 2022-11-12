@@ -72,10 +72,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(clientForm, SIGNAL(clientRevToServer(int)),
             serverForm, SLOT(remClient(int)));
 
-    clientForm->loadData();
-    productForm->loadData();
-    orderForm->loadData();
-
     /* ui 설정 */
     ui->stackedWidget->insertWidget(0, clientForm);
     ui->stackedWidget->insertWidget(1, productForm);
@@ -84,6 +80,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     clientForm->showMaximized();
     ui->stackedWidget->setCurrentIndex(0);
+
+    orderForm->loadData();
+    clientForm->loadData();
+    productForm->loadData();
 
     this->setWindowTitle("Qt_Project");
 }
