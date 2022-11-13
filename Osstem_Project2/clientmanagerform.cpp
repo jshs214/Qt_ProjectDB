@@ -75,6 +75,8 @@ void ClientManagerForm::loadData()
         clientModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Address"));
 
         ui->clientTableView->setModel(clientModel); //ui에 표시할 모델 설정
+        ui->clientTableView->horizontalHeader()->setStyleSheet(
+                    "QHeaderView { font-weight: bold; };");
     }
     /* 고객정보 데이터를 불러 올 때, 주문정보, 채팅서버에 불러온 데이터를 시그널을 통해 전송 */
     for(int i = 0; i < clientModel->rowCount(); i++) {

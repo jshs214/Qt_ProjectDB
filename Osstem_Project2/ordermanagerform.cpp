@@ -116,7 +116,8 @@ void OrderManagerForm::loadData()
         orderModel->setHeaderData(6, Qt::Horizontal, QObject::tr("Address"));
 
         ui->orderTableView->setModel(orderModel);       //ui에 표시할 모델 설정
-
+        ui->orderTableView->horizontalHeader()->setStyleSheet(
+                    "QHeaderView { font-weight: bold; };");
         ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
     }
 }
@@ -231,6 +232,26 @@ void OrderManagerForm::modProduct(int id, QString name, QString price, QString s
         productItemModel->setItem(ix.row(), 2, new QStandardItem(price));
         productItemModel->setItem(ix.row(), 3, new QStandardItem(stock));
     }
+}
+
+/* 고객 검색 시, 콤보박스index에 따른 모델 설정 및 버튼상태 변경 */
+void OrderManagerForm::on_clientComboBox_activated(int index)
+{
+    if(index == 0){
+        ui->clientTreeView->setModel(clientItemModel);
+        ui->clientButton->setEnabled(false);
+    }
+    else ui->clientButton->setEnabled(true);
+}
+
+/* 제품 검색 시, 콤보박스index에 따른 모델 설정 및 버튼상태 변경 */
+void OrderManagerForm::on_productComboBox_activated(int index)
+{
+    if(index == 0){
+        ui->productTreeView->setModel(productItemModel);
+        ui->productButton->setEnabled(false);
+    }
+    else ui->productButton->setEnabled(true);
 }
 
 /*고객 id나 이름 검색하는 슬롯 */
@@ -663,24 +684,4 @@ void OrderManagerForm::on_statePushButton_clicked()
     orderModel->select();
 }
 
-/* 제품 검색 시, 콤보박스 처리 */
-void OrderManagerForm::on_clientComboBox_activated(int index)
-{
-    if(index == 0){
-        ui->clientTreeView->setModel(clientItemModel);
-        ui->clientButton->setEnabled(false);
-    }
-    else ui->clientButton->setEnabled(true);
-}
-
-/* 제품 검색 시, 콤보박스 처리 */
-void OrderManagerForm::on_productComboBox_activated(int index)
-{
-    if(index == 0){
-        ui->productTreeView->setModel(productItemModel);
-        ui->productButton->setEnabled(false);
-    }
-    else ui->productButton->setEnabled(true);
-
-}
 

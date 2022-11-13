@@ -98,7 +98,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
             loadData();     /* 채팅방의 채팅 로그 불러오기 */
 
             auto parts = ui->message->toPlainText().split(u'\n');
-
             /* 재접속 시, 기존 채팅로그를 불러오게 처리 */
             chattingData.clear();       //중복 방지
             foreach(auto v, parts)
@@ -117,7 +116,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->fileButton->setDisabled(true);
 
             saveData();     /* 채팅방의 채팅 로그 저장 */
-
             ui->message->clear();
         }
     } );
@@ -252,6 +250,7 @@ void ChattingForm::receiveData( )
         sendProtocol(Chat_List,data.toStdString().data());
 
         loadData();     /* 채팅방의 채팅 로그 불러오기 */
+
         /* 재접속 시, 기존 채팅로그를 불러오게 처리 */
         auto parts =  ui->message->toPlainText().split(u'\n');;
         chattingData.clear();       //중복 방지
@@ -396,6 +395,8 @@ void ChattingForm::sendProtocol(Chat_Status type, char* data, int size)
 /* 로그아웃 슬롯 */
 void ChattingForm::on_logoutButton_clicked()
 {
+    saveData();     /* 채팅방의 채팅 로그 저장 */
+
     sendProtocol(Chat_LogOut, ui->nameLineEdit->text().toStdString().data()); // 프로토콜 생성해서 서버로 전송
     ui->message->clear();
     clientSocket->disconnectFromHost(); //소켓 닫기
@@ -439,7 +440,7 @@ void ChattingForm::saveData()
     for (const auto& v : qAsConst(chattingData)) {
         out << v <<"\n";
     }
-
     file.close( );
 }
+
 

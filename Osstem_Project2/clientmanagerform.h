@@ -10,8 +10,6 @@ class QMenu;
 class QSqlDatabase;
 class QSqlTableModel;
 
-class QMenu;
-
 namespace Ui {
 class ClientManagerForm;
 }
@@ -26,11 +24,11 @@ public:
     ~ClientManagerForm();
 
     void loadData();    /* 고객정보 DB의 데이터를 불러오는 메서드 */
-    int makeId();       /* 고객 키값 생성 메서드 */
 
 private:
-    QMenu* menu;    //ContextMenu를 위한 메뉴
     Ui::ClientManagerForm *ui;
+    QMenu* menu;         //ContextMenu를 위한 메뉴
+    int makeId();        /* 고객 키값 생성 메서드 */
     QSqlTableModel *clientModel;    //고객모델 객체
 
 signals:

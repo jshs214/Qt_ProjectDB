@@ -5,7 +5,6 @@
 #include <QHash>
 
 class QMenu;
-
 class QSqlDatabase;
 class QSqlTableModel;
 
@@ -23,11 +22,11 @@ public:
     ~ProductManagerForm();
 
     void loadData();    /* 고객정보 DB의 데이터를 불러오는 메서드 */
-    int makeId();       /* 고객 키값 생성 메서드 */
-private:
-    QMenu* menu;    //ContextMenu를 위한 메뉴
-    Ui::ProductManagerForm *ui;
 
+private:
+    Ui::ProductManagerForm *ui;
+    QMenu* menu;    //ContextMenu를 위한 메뉴
+    int makeId();       /* 고객 키값 생성 메서드 */
     QSqlTableModel *productModel;   //제품모델 객체
 
 signals:
@@ -39,6 +38,7 @@ signals:
 private slots:
     void showContextMenu(const QPoint &);   /* ContextMenu 슬롯 */
     void on_clearButton_clicked();          /* 버튼 클릭 시 입력 값 초기화 하는 슬롯 */
+
     void on_addPushButton_clicked();        /* 제품정보추가를 위한 슬롯 */
     void on_modifyPushButton_clicked();     /* 제품정보변경을 위한 슬롯 */
     void removeItem();                      /* 제품정보삭제를 위한 슬롯 */
