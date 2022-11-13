@@ -201,28 +201,28 @@ void ClientManagerForm::on_searchPushButton_clicked()
     int i = ui->searchComboBox->currentIndex();         //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     switch (i){
     case 0: //id 검색
-        /* 검색한 데이터와 id가 일치하면 뷰에 검색결과 출력 후 메시지박스 */
-        clientModel->setFilter(QString("id = '%1'").arg(searchValue));
+        /* 검색한 데이터와 id가 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        clientModel->setFilter(QString("id LIKE '%%1%'").arg(searchValue));
         clientModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(clientModel->rowCount()));
         break;
     case 1: //이름 검색
-        /* 검색한 데이터에 이름이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 이름이 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
         clientModel->setFilter(QString("name LIKE '%%1%'").arg(searchValue));
         clientModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(clientModel->rowCount()));
         break;
     case 2: //전화번호 검색
-        /* 검색한 데이터에 id가 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 id가 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
         clientModel->setFilter(QString("phoneNumber LIKE '%%1%'").arg(searchValue));
         clientModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(clientModel->rowCount()));
         break;
     case 3: //주소 검색
-        /* 검색한 데이터에 id가 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 id가 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
         clientModel->setFilter(QString("address LIKE '%%1%'").arg(searchValue));
         clientModel->select();
         QMessageBox::information(this, tr("Search Info"),

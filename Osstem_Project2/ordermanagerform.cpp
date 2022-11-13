@@ -38,6 +38,7 @@ OrderManagerForm::OrderManagerForm(QWidget *parent) :
     connect(ui->clientLineEdit, SIGNAL(returnPressed()), this, SLOT(on_clientButton_clicked()));
     connect(ui->productLineEdit, SIGNAL(returnPressed()), this, SLOT(on_productButton_clicked()));
 
+    /* 버튼의 상태변경 */
     ui->clientButton->setEnabled(false);
     ui->productButton->setEnabled(false);
 
@@ -104,6 +105,7 @@ void OrderManagerForm::loadData()
         searchProductModel->setHeaderData(2, Qt::Horizontal, tr("price"));
         searchProductModel->setHeaderData(3, Qt::Horizontal, tr("stock"));
 
+
         /* 주문 모델 헤더 명 설정 */
         orderModel->setHeaderData(0, Qt::Horizontal, QObject::tr("OrderNum"));
         orderModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Client"));
@@ -157,9 +159,9 @@ void OrderManagerForm::updateClient(int id, QString name,
                                     QString phoneNumber, QString address)   //고객id, 이름, 전화번호, 주소
 {
     Q_UNUSED(phoneNumber);
+    /* 고객Item모델에 데이터 추가 */
     QStringList strings;
     strings << QString::number(id) << name << address;
-
     QList<QStandardItem*> items;
     for (int i = 0; i < 3; i++) {
         items.append(new QStandardItem(strings.at(i)));
@@ -170,10 +172,9 @@ void OrderManagerForm::updateClient(int id, QString name,
 /* 고객정보 데이터 제거 */
 void OrderManagerForm::delClient(int id)    //고객 id
 {
-    /* 고객아이템모델에서 id와 일치하는 index를 찾음  */
+    /* 고객Item모델에서 id와 일치하는 index를 찾아 해당 index의 데이터 제거  */
     QModelIndexList index = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
                                                    id, -1, Qt::MatchFlags(Qt::MatchFixedString));
-
     foreach(auto ix, index) {
         clientItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
         ui->clientTreeView->update();                //뷰 update
@@ -184,6 +185,7 @@ void OrderManagerForm::delClient(int id)    //고객 id
 void OrderManagerForm::modClient(int id, QString name,
                                  QString phoneNumber, QString address)  //고객id, 이름, 전화번호, 주소
 {
+    /* 고객Item모델에서 id와 일치하는 index를 찾아 해당 index의 데이터 변경  */
     QModelIndexList index = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
                                                    id, -1, Qt::MatchFlags(Qt::MatchFixedString));
     foreach(auto ix, index) {
@@ -196,9 +198,9 @@ void OrderManagerForm::modClient(int id, QString name,
 void OrderManagerForm::updateProduct(int id, QString name,
                                      QString price, QString stock)  //제품id, 이름, 가격, 수량
 {
+    /* 제품Item모델에 데이터 추가 */
     QStringList strings;
     strings << QString::number(id) << name << price << stock;
-
     QList<QStandardItem*> items;
     for (int i = 0; i < 4; i++) {
         items.append(new QStandardItem(strings.at(i)));
@@ -209,10 +211,9 @@ void OrderManagerForm::updateProduct(int id, QString name,
 /* 제품정보 데이터 제거 */
 void OrderManagerForm::delProduct(int id)
 {
-    /* 제품아이템모델에서 id와 일치하는 index를 찾음  */
+    /* 제품아이템모델에서 id와 일치하는 index를 찾아 해당 index의 데이터 제거  */
     QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
                                                     id, -1, Qt::MatchFlags(Qt::MatchFixedString));
-
     foreach(auto ix, index) {
         productItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
         ui->productTreeView->update();                //뷰 update
@@ -222,6 +223,7 @@ void OrderManagerForm::delProduct(int id)
 /* 제품정보 데이터 변경 */
 void OrderManagerForm::modProduct(int id, QString name, QString price, QString stock)
 {
+    /* 제품아이템모델에서 id와 일치하는 index를 찾아 해당 index의 데이터 변경  */
     QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
                                                     id, -1, Qt::MatchFlags(Qt::MatchFixedString));
     foreach(auto ix, index) {
@@ -234,23 +236,26 @@ void OrderManagerForm::modProduct(int id, QString name, QString price, QString s
 /*고객 id나 이름 검색하는 슬롯 */
 void OrderManagerForm::on_clientButton_clicked()
 {
-    searchClientModel->clear();                 // 중복 방지
+    searchClientModel->removeRows(0,searchClientModel->rowCount());
 
     QString str = ui->clientLineEdit->text();   // 검색할 값은 ui에서 입력한 QString 데이터
     int i = ui->clientComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
-    /* id 검색. 고객Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
+    auto flag = (i)? Qt::MatchCaseSensitive|Qt::MatchContains
+                   : Qt::MatchCaseSensitive;
+
+    /* id 검색. 고객Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList idIndex = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
-                                                     str, -1, Qt::MatchFlags(Qt::MatchFixedString));
-    /* 이름검색. 고객Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
+                                                     str, -1, Qt::MatchFlags(flag));
+    /* 이름검색. 고객Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList nameIndex = clientItemModel->match(clientItemModel->index(0, 1), Qt::EditRole,
-                                                       str, -1, Qt::MatchFlags(Qt::MatchContains));
-    /* 주소검색. 고객Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
+                                                       str, -1, Qt::MatchFlags(flag));
+    /* 주소검색. 고객Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList addressIndex = clientItemModel->match(clientItemModel->index(0, 2), Qt::EditRole,
-                                                          str, -1, Qt::MatchFlags(Qt::MatchContains));
+                                                          str, -1, Qt::MatchFlags(flag));
     ui->clientTreeView->setModel(searchClientModel);    // 검색 시, 뷰의 세팅은 고객Item모델 -> 고객Item검색모델
 
     switch (i){
-    case 1: //id 검색(완전일치)
+    case 1: //id 검색
         /* 검색한 데이터에 이름이 포함되면 뷰에 검색결과 출력 */
         foreach(auto ix, idIndex) {
             int id = clientItemModel->data(ix.siblingAtColumn(0)).toInt();
@@ -258,17 +263,16 @@ void OrderManagerForm::on_clientButton_clicked()
             QString address = clientItemModel->data(ix.siblingAtColumn(2)).toString();
             QStringList strings;
             strings << QString::number(id) << name  << address;
-
+            /* 고객Item모델에서 검색값을 받아 고객Item검색 모델로 데이터를 추가 */
             QList<QStandardItem *> items;
             for (int i = 0; i < 3; ++i) {
                 items.append(new QStandardItem(strings.at(i)));
             }
-
             searchClientModel->appendRow(items);
             ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
-    case 2: //이름 검색(부분일치)
+    case 2: //이름 검색
         /* 검색한 데이터에 id가 포함되면 뷰에 검색결과 출력*/
         foreach(auto ix, nameIndex) {
             int id = clientItemModel->data(ix.siblingAtColumn(0)).toInt();
@@ -276,29 +280,27 @@ void OrderManagerForm::on_clientButton_clicked()
             QString address = clientItemModel->data(ix.siblingAtColumn(2)).toString();
             QStringList strings;
             strings << QString::number(id) << name  << address;
-
+            /* 고객Item모델에서 검색값을 받아 고객Item검색 모델로 데이터를 추가 */
             QList<QStandardItem *> items;
             for (int i = 0; i < 3; ++i) {
                 items.append(new QStandardItem(strings.at(i)));
             }
-
             searchClientModel->appendRow(items);
             ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
-    case 3: //주소 검색(부분일치)
+    case 3: //주소 검색
         foreach(auto ix, addressIndex) {
             int id = clientItemModel->data(ix.siblingAtColumn(0)).toInt();
             QString name = clientItemModel->data(ix.siblingAtColumn(1)).toString();
             QString address = clientItemModel->data(ix.siblingAtColumn(2)).toString();
             QStringList strings;
             strings << QString::number(id) << name  << address;
-
+            /* 고객Item모델에서 검색값을 받아 고객Item검색 모델로 데이터를 추가 */
             QList<QStandardItem *> items;
             for (int i = 0; i < 3; ++i) {
                 items.append(new QStandardItem(strings.at(i)));
             }
-
             searchClientModel->appendRow(items);
             ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
@@ -313,31 +315,31 @@ void OrderManagerForm::on_clientButton_clicked()
 /* 제품 id나 이름 검색하는 슬롯 */
 void OrderManagerForm::on_productButton_clicked()
 {
-    searchProductModel->clear();                 // 중복 방지
+    searchProductModel->removeRows(0,searchProductModel->rowCount()); //중복 방지
 
     QString str = ui->productLineEdit->text();   // 검색할 값은 ui에서 입력한 QString 데이터
     int i = ui->productComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
-
-    /* 제품Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
+    auto flag = (i)? Qt::MatchCaseSensitive|Qt::MatchContains
+                   : Qt::MatchCaseSensitive;
+    /* 제품Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList idindex = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
-                                                      str, -1, Qt::MatchFlags(Qt::MatchFixedString));
-    /* 제품Item 모델에서 검색하는 데이터가 포함되는 데이터의 인덱스 */
+                                                      str, -1, Qt::MatchFlags(flag));
+    /* 제품Item 모델에서 검색하는 데이터가 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList nameindex = productItemModel->match(productItemModel->index(0, 1), Qt::EditRole,
-                                                        str, -1, Qt::MatchFlags(Qt::MatchContains));
+                                                        str, -1, Qt::MatchFlags(flag));
 
     ui->productTreeView->setModel(searchProductModel);  // 검색 시, 뷰의 세팅은 제품 Item모델 -> 제품 Item검색모델
     switch (i){
-    case 1: //id 검색(완전일치)
+    case 1: //id 검색
         /* 검색한 데이터와 id가 일치하면 뷰에 검색결과 출력 */
         foreach(auto ix, idindex) {
             int id = productItemModel->data(ix.siblingAtColumn(0)).toInt();
             QString name = productItemModel->data(ix.siblingAtColumn(1)).toString();
             QString price = productItemModel->data(ix.siblingAtColumn(2)).toString();
             QString stock = productItemModel->data(ix.siblingAtColumn(3)).toString();
-
+            /* 제품Item모델에서 검색값을 받아 제품Item검색 모델로 데이터를 추가 */
             QStringList strings;
             strings << QString::number(id) << name  << price << stock;
-
             QList<QStandardItem *> items;
             for (int i = 0; i < 4; ++i) {
                 items.append(new QStandardItem(strings.at(i)));
@@ -347,17 +349,16 @@ void OrderManagerForm::on_productButton_clicked()
             ui->productTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
-    case 2: //이름 검색(부분일치)
+    case 2: //이름 검색
         /* 검색한 데이터에 id가 포함되면 뷰에 검색결과 출력 */
         foreach(auto ix, nameindex) {
             int id = productItemModel->data(ix.siblingAtColumn(0)).toInt();
             QString name = productItemModel->data(ix.siblingAtColumn(1)).toString();
             QString price = productItemModel->data(ix.siblingAtColumn(2)).toString();
             QString stock = productItemModel->data(ix.siblingAtColumn(3)).toString();
-
+            /* 제품Item모델에서 검색값을 받아 제품Item검색 모델로 데이터를 추가 */
             QStringList strings;
             strings << QString::number(id) << name  << price << stock;
-
             QList<QStandardItem *> items;
             for (int i = 0; i < 4; ++i) {
                 items.append(new QStandardItem(strings.at(i)));
@@ -376,10 +377,10 @@ void OrderManagerForm::on_productButton_clicked()
 /* 고객 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
 void OrderManagerForm::on_clientTreeView_clicked(const QModelIndex &index)
 {
+    /* 클릭한 Index의 데이터를 가져옴 */
     QString client;
     client = index.sibling(index.row(), 0).data().toString() + "(" +
             index.sibling(index.row(), 1).data().toString() + ")";
-
     ui->cIdLineEdit->setText(client);
     ui->addressLineEdit->setText(index.sibling(index.row(), 2).data().toString() );
 }
@@ -387,6 +388,7 @@ void OrderManagerForm::on_clientTreeView_clicked(const QModelIndex &index)
 /* 제품 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
 void OrderManagerForm::on_productTreeView_clicked(const QModelIndex &index)
 {
+    /* 클릭한 Index의 데이터를 가져옴 */
     QString product;
     product = index.sibling(index.row(), 0).data().toString() + "(" +
             index.sibling(index.row(), 1).data().toString() + ")";
@@ -398,16 +400,17 @@ void OrderManagerForm::on_productTreeView_clicked(const QModelIndex &index)
 /* 주문 정보 추가 */
 void OrderManagerForm::on_addPushButton_clicked()
 {
-    auto flag = Qt::MatchFixedString;
+    auto flag = Qt::MatchFixedString;   //완전일치
+    /* 제품id index. 제품Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
     QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
                                                     ui->pIdLineEdit->text().left(5), -1, Qt::MatchFlags(flag));
-
+    /* 제품id index. 제품Item 검색모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
     QModelIndexList srcIndex = searchProductModel->match(searchProductModel->index(0, 0), Qt::EditRole,
                                                          ui->pIdLineEdit->text().left(5), -1, Qt::MatchFlags(flag));
-    QString client, product, stock, price, address, sum;
-    QString productKey, productTree_Stock;  //제품id, 주문 수량
+    QString client, product, stock, price, address, sum;    //고객, 제품, 수량, 가격, 주소, 총합
+    QString productKey, productTree_Stock;                  //제품id, 주문 수량
 
-    /* 추가 시 LineEdit에 입력했던 고객, 제품, 수량, 가격, 주소, 총 합의 데이터 저장 */
+    /* 추가 시 LineEdit에 있는 고객, 제품, 수량, 가격, 주소, 총 합의 데이터 저장 */
     int id = makeId( );
     ui->idLineEdit->setText(QString::number(id));
     client = ui->cIdLineEdit->text();
@@ -417,24 +420,23 @@ void OrderManagerForm::on_addPushButton_clicked()
     address = ui->addressLineEdit->text();
     sum = ui->sumLineEdit->text();
 
+    /* 제품의 재고를 가져오기 위한 foreach 문 */
     foreach(auto ix, index) {
-        productTree_Stock = productItemModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
+        productTree_Stock = productItemModel->data(ix.siblingAtColumn(3)).toString();
     }
-
     productKey =  ui->pIdLineEdit->text().left(5);   //제품 id
-
     /* 재고반영을 위한 시그널 */
     emit productAddKeySent(productKey.toInt(), stock ); //제품id, 주문수량
 
     /* 주문 수량이 재고보다 많을 경우 예외 */
     if(productTree_Stock.toInt() < ui->stockLineEdit->text().toInt()) return;
 
-    /* 주문이 되면 제품리스트의 재고를 변경 */
+    /* 주문이 되면 제품리스트의 제품Item모델의 재고를 변경 */
     QString result_stock = QString::number(productTree_Stock.toInt() - stock.toInt());
-
     foreach(auto ix, index) {
         productItemModel->setItem(ix.row(), 3, new QStandardItem(result_stock));
     }
+    /* 주문이 되면 제품리스트의 제품Item검색모델의 재고를 변경 */
     foreach(auto ix, srcIndex){
         searchProductModel->setItem(ix.row(), 3, new QStandardItem(result_stock));
     }
@@ -471,9 +473,9 @@ void OrderManagerForm::on_addPushButton_clicked()
 /* 주문 정보 변경 */
 void OrderManagerForm::on_modifyPushButton_clicked()
 {
-    QModelIndex index = ui->orderTableView->currentIndex();
+    QModelIndex index = ui->orderTableView->currentIndex();     //변경하고자 하는 주문정보데이터의 index
     if(index.isValid()) {
-        QString client, product, stock, price, address, sum;
+        QString client, product, stock, price, address, sum;    //고객, 제품, 수량, 가격, 주소, 총합
         QString productKey, orderStock; //제품 id, 주문수량
         int result, beInStock;          //변경가능 재고량, 제품리스트의 재고 + 주문되어있는 재고
 
@@ -498,13 +500,13 @@ void OrderManagerForm::on_modifyPushButton_clicked()
             productKey = query.value(0).toString().left(5); // 제품id
             orderStock = query.value(1).toString();         // 입력된 수량 (주문되어있는 재고)
         }
-
-        /* 주문 변경 시, 제품id가 일치하는 제품리스트의 재고 변경 */
+        /* 제품id index. 제품Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
         QModelIndexList index = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
                                                         ui->pIdLineEdit->text().left(5), -1, Qt::MatchFlags(Qt::MatchFixedString));
-
+        /* 제품id index. 제품Item 검색모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
         QModelIndexList srcIndex = searchProductModel->match(searchProductModel->index(0, 0), Qt::EditRole,
                                                              ui->pIdLineEdit->text().left(5), -1, Qt::MatchFlags(Qt::MatchFixedString));
+        /* 주문 변경 시, 제품id가 일치하는 제품Item모델의 재고 변경 */
         foreach(auto ix, index) {
             QString productStock = productItemModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
             result = productStock.toInt() +orderStock.toInt() - ui->stockLineEdit->text().toInt();  //변경 가능한 재고량
@@ -518,7 +520,7 @@ void OrderManagerForm::on_modifyPushButton_clicked()
             }
             productItemModel->setItem(ix.row(), 3, new QStandardItem(QString::number(result)));
         }
-
+        /* 주문 변경 시, 제품id가 일치하는 제품Item검색모델의 재고 변경 */
         foreach(auto ix, srcIndex) {
             QString productStock = searchProductModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
             result = productStock.toInt() +orderStock.toInt() - ui->stockLineEdit->text().toInt();  //변경 가능한 재고량
@@ -556,27 +558,28 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 /* 주문 정보 제거 */
 void OrderManagerForm::removeItem()
 {
-    QString productKey, productStock ,delStock;   //제품id, 주문제거한 수량
+    QString productKey, productStock ,delStock;             //제품id, 주문제거한 수량
     int result; //반영할 재고량
 
-    QModelIndex index = ui->orderTableView->currentIndex();
+    QModelIndex index = ui->orderTableView->currentIndex(); //주문정보에서 제거하고자 하는 데이터의 index
 
-    productKey = index.sibling(index.row(), 2).data().toString().left(5);
-    delStock = index.sibling(index.row(), 3).data().toString();
+    productKey = index.sibling(index.row(), 2).data().toString().left(5);   //제거하고자 하는 제품 id
+    delStock = index.sibling(index.row(), 3).data().toString();             //제거하는 제품의 주문수량
 
+    /* 제품id index. 제품Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
     QModelIndexList indexes = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
                                                       productKey, -1, Qt::MatchFlags(Qt::MatchFixedString));
     foreach(auto ix, indexes) {
-        productStock = productItemModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
-        result = productStock.toInt() + delStock.toInt();
+        productStock = productItemModel->data(ix.siblingAtColumn(3)).toString();    //제품리스트의 재고
+        result = productStock.toInt() + delStock.toInt();                           //주문취소 후 재고량
         productItemModel->setItem(ix.row(), 3, new QStandardItem(QString::number(result)));
     }
-
+    /* 제품id index. 제품Item 검색모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
     QModelIndexList srcIndex = searchProductModel->match(searchProductModel->index(0, 0), Qt::EditRole,
                                                          productKey, -1, Qt::MatchFlags(Qt::MatchFixedString));
     foreach(auto ix, srcIndex) {
-        productStock = searchProductModel->data(ix.siblingAtColumn(3)).toString();            //제품리스트의 재고
-        result = productStock.toInt() + delStock.toInt();
+        productStock = searchProductModel->data(ix.siblingAtColumn(3)).toString();  //제품리스트의 재고
+        result = productStock.toInt() + delStock.toInt();                           //주문취소 후 재고량
         searchProductModel->setItem(ix.row(), 3, new QStandardItem(QString::number(result)));
     }
     if(index.isValid()) {
@@ -596,21 +599,21 @@ void OrderManagerForm::on_searchPushButton_clicked()
     int i = ui->searchComboBox->currentIndex(); //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     switch (i){
     case 0: //주문번호 검색
-        /* 검색한 데이터와 id가 일치하면 뷰에 검색결과 출력 후 메시지박스 */
-        orderModel->setFilter(QString("id = '%1'").arg(searchValue));
+        /* 검색한 데이터와 id가 포함되거나 일치하면 뷰에 검색결과 출력 후 메시지박스 */
+        orderModel->setFilter(QString("id LIKE '%%1%'").arg(searchValue));
         orderModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(orderModel->rowCount()));
         break;
     case 1: //client 검색
-        /* 검색한 데이터에 client이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 client가 포함되거나 일치하면 뷰에 검색결과 출력 후 메시지박스 */
         orderModel->setFilter(QString("client LIKE '%%1%'").arg(searchValue));
         orderModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(orderModel->rowCount()));
         break;
     case 2: //product 검색
-        /* 검색한 데이터에 product이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 product이 포함되거나 일치하면 뷰에 검색결과 출력 후 메시지박스 */
         orderModel->setFilter(QString("product LIKE '%%1%'").arg(searchValue));
         orderModel->select();
         QMessageBox::information(this, tr("Search Info"),
@@ -621,7 +624,7 @@ void OrderManagerForm::on_searchPushButton_clicked()
         break;
     }
 
-    /* 검색 후 id 생성 시, DB에 저장된 마지막 id 값보다 +1 */
+    /* 검색 후 id 생성 시, 주문모델에 저장된 마지막 id 값보다 +1 */
     QString filterStr = "id in (";
     for(int i = 0; i < orderModel->rowCount(); i++) {
         int id = orderModel->data(orderModel->index(i, 0)).toInt();
@@ -660,7 +663,7 @@ void OrderManagerForm::on_statePushButton_clicked()
     orderModel->select();
 }
 
-
+/* 제품 검색 시, 콤보박스 처리 */
 void OrderManagerForm::on_clientComboBox_activated(int index)
 {
     if(index == 0){
@@ -670,7 +673,7 @@ void OrderManagerForm::on_clientComboBox_activated(int index)
     else ui->clientButton->setEnabled(true);
 }
 
-
+/* 제품 검색 시, 콤보박스 처리 */
 void OrderManagerForm::on_productComboBox_activated(int index)
 {
     if(index == 0){

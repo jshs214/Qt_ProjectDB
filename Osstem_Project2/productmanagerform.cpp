@@ -214,28 +214,28 @@ void ProductManagerForm::on_searchPushButton_clicked()
     int i = ui->searchComboBox->currentIndex();         //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     switch (i){
     case 0: //id 검색
-        /* 검색한 데이터와 id가 일치하면 뷰에 검색결과 출력 후 메시지박스 */
-        productModel->setFilter(QString("id = '%1'").arg(searchValue));
+        /* 검색한 데이터와 id가 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        productModel->setFilter(QString("id LIKE '%%1%'").arg(searchValue));
         productModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(productModel->rowCount()));
         break;
     case 1: //이름 검색
-        /* 검색한 데이터에 이름이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 이름이 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
         productModel->setFilter(QString("name LIKE '%%1%'").arg(searchValue));
         productModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(productModel->rowCount()));
         break;
     case 2: //가격 검색
-        /* 검색한 데이터에 가격이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 가격이 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
         productModel->setFilter(QString("price LIKE '%%1%'").arg(searchValue));
         productModel->select();
         QMessageBox::information(this, tr("Search Info"),
                                  QString( tr("%1 search results were found") ).arg(productModel->rowCount()));
         break;
     case 3: //수량 검색
-        /* 검색한 데이터에 수량이 포함되면 뷰에 검색결과 출력 후 메시지박스 */
+        /* 검색한 데이터에 수량이 일치하거나 포함되면 뷰에 검색결과 출력 후 메시지박스 */
         productModel->setFilter(QString("stock LIKE '%%1%'").arg(searchValue));
         productModel->select();
         QMessageBox::information(this, tr("Search Info"),

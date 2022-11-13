@@ -43,13 +43,13 @@
             <widget class="QComboBox" name="clientComboBox">
              <property name="minimumSize">
               <size>
-               <width>55</width>
+               <width>60</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>55</width>
+               <width>60</width>
                <height>16777215</height>
               </size>
              </property>
@@ -76,7 +76,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="clientLineEdit"/>
+            <widget class="QLineEdit" name="clientLineEdit">
+             <property name="placeholderText">
+              <string>고객정보 검색</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="clientButton">
@@ -99,13 +103,13 @@
             <widget class="QComboBox" name="productComboBox">
              <property name="minimumSize">
               <size>
-               <width>55</width>
+               <width>60</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>55</width>
+               <width>60</width>
                <height>16777215</height>
               </size>
              </property>
@@ -127,7 +131,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="productLineEdit"/>
+            <widget class="QLineEdit" name="productLineEdit">
+             <property name="placeholderText">
+              <string>제품정보 검색</string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="productButton">
