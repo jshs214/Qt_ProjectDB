@@ -209,6 +209,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>serverIP</tabstop>
+  <tabstop>serverPort</tabstop>
+  <tabstop>stateTreeWidget</tabstop>
+  <tabstop>nameLineEdit</tabstop>
+  <tabstop>idLineEdit</tabstop>
+  <tabstop>connectButton</tabstop>
+  <tabstop>logoutButton</tabstop>
+  <tabstop>message</tabstop>
+  <tabstop>fileButton</tabstop>
+  <tabstop>inputLine</tabstop>
+  <tabstop>sentButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

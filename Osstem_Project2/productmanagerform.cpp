@@ -65,7 +65,7 @@ void ProductManagerForm::loadData()
         productModel->setTable("productList");      //모델이 작동하는 DB 테이블 설정
         productModel->select();                     //모델의 데이터 조회
 
-        /* DB 테이블 헤더 명 설정 */
+        /* 제품모델의 헤더 명 설정 */
         productModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
         productModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
         productModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Price"));

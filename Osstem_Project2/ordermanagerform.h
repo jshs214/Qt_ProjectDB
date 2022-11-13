@@ -28,10 +28,11 @@ private:
     QMenu* menu;    //ContextMenu를 위한 메뉴
     Ui::OrderManagerForm *ui;
     QSqlTableModel *orderModel;     //주문모델 객체
-    QStandardItemModel *clientItemModel;
-    QStandardItemModel *productItemModel;
-    QStandardItemModel *searchClientModel;
-    QStandardItemModel *searchProductModel;
+    QStandardItemModel *clientItemModel;    //고객Item모델
+    QStandardItemModel *productItemModel;   //제품Item모델
+
+    QStandardItemModel *searchClientModel;  //고객검색Item모델
+    QStandardItemModel *searchProductModel; //제품검색Item모델
 
 signals:
     /* 재고반영을 위한 시그널  */
@@ -71,6 +72,8 @@ private slots:
     void on_statePushButton_clicked();                          /* 주문정보를 담고있는 모델의 모든 데이터 출력 슬롯 */
 
 
+    void on_clientComboBox_activated(int index);
+    void on_productComboBox_activated(int index);
 };
 
 #endif // ORDERMANAGERFORM_H

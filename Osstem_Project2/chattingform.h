@@ -53,7 +53,6 @@ private slots:
     void sendProtocol(Chat_Status, char*, int = 1020);  /* 프로토콜 생성해서 서버로 전송 */
     void on_logoutButton_clicked();     /* 로그아웃 슬롯 */
 
-
 };
 
 #endif // CHATTINGFORM_H

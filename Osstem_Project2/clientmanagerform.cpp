@@ -68,7 +68,7 @@ void ClientManagerForm::loadData()
         clientModel->setTable("clientList");        //모델이 작동하는 DB 테이블 설정
         clientModel->select();                      //모델의 데이터 조회
 
-        /* DB 테이블 헤더 명 설정 */
+        /* 고객 모델의 헤더 명 설정 */
         clientModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
         clientModel->setHeaderData(1, Qt::Horizontal, QObject::tr("Name"));
         clientModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Phone Number"));

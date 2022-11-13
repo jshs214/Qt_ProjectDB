@@ -84,7 +84,9 @@ ChattingForm::ChattingForm(QWidget *parent) :
             sendProtocol(Chat_Login, (ui->nameLineEdit->text().toStdString()+","+
                                       ui->idLineEdit->text().toStdString()).data() );
 
-            savedLoadData();
+            foreach(auto v, chattingData){
+
+            }
         }
         else if(ui->connectButton->text() == tr("Chat in"))  {        /* Chat in 버튼 클릭 시 Chat in */
             /* 프로토콜 생성해서 서버로 전송 */
@@ -96,7 +98,7 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->sentButton->setEnabled(true);
             ui->fileButton->setEnabled(true);
 
-            loadData();
+            savedLoadData();
 
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {       /* Chat Out 버튼 클릭 시 Chat Out */
@@ -392,7 +394,8 @@ void ChattingForm::savedLoadData()
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
-        chattingData.append(line);
+        //chattingData.append(line);
+        ui->message->append(line);
     }
     file.close( );
 }
@@ -434,3 +437,4 @@ void ChattingForm::saveData()
 
     file.close( );
 }
+
