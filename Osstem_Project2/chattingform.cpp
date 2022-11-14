@@ -95,15 +95,9 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->sentButton->setEnabled(true);
             ui->fileButton->setEnabled(true);
 
-            loadData();     /* 채팅방의 채팅 로그 불러오기 */
-
-            auto parts = ui->message->toPlainText().split(u'\n');
-            /* 재접속 시, 기존 채팅로그를 불러오게 처리 */
             chattingData.clear();       //중복 방지
-            foreach(auto v, parts)
-            {
-                chattingData.append(v);
-            }
+            loadData();
+
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {       /* Chat Out 버튼 클릭 시 Chat Out */
             /* 프로토콜 생성해서 서버로 전송 */
@@ -228,7 +222,6 @@ void ChattingForm::receiveData( )
         sendProtocol(Chat_List,data.toStdString().data());
 
         saveData();     /* 채팅방의 채팅 로그 저장 */
-
         ui->message->clear();
         break;
     }
@@ -250,15 +243,8 @@ void ChattingForm::receiveData( )
         QString data ="";
         sendProtocol(Chat_List,data.toStdString().data());
 
-        loadData();     /* 채팅방의 채팅 로그 불러오기 */
-
-        /* 재접속 시, 기존 채팅로그를 불러오게 처리 */
-        auto parts =  ui->message->toPlainText().split(u'\n');;
         chattingData.clear();       //중복 방지
-        foreach(auto v, parts)
-        {
-            chattingData.append(v);
-        }
+        loadData();     /* 채팅방의 채팅 로그 불러오기 */
 
         break;
     }
@@ -421,6 +407,7 @@ void ChattingForm::loadData()
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
+        chattingData.append(line);
         ui->message->append(line);
     }
     file.close( );
