@@ -80,8 +80,8 @@ void OrderManagerForm::loadData()
         clientItemModel->setHeaderData(0, Qt::Horizontal, tr("ID"));
         clientItemModel->setHeaderData(1, Qt::Horizontal, tr("Name"));
         clientItemModel->setHeaderData(2, Qt::Horizontal, tr("Address"));
-        ui->clientTreeView->setModel(clientItemModel);
-        ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        ui->clientItemTreeView->setModel(clientItemModel);      //ui에 표시할 고객Item모델 설정
+        ui->clientItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
         /* 제품Item모델 객체 생성 및 헤더 명 설정*/
         productItemModel = new QStandardItemModel(0, 4);
@@ -89,8 +89,8 @@ void OrderManagerForm::loadData()
         productItemModel->setHeaderData(1, Qt::Horizontal, tr("Name"));
         productItemModel->setHeaderData(2, Qt::Horizontal, tr("price"));
         productItemModel->setHeaderData(3, Qt::Horizontal, tr("stock"));
-        ui->productTreeView->setModel(productItemModel);
-        ui->productTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+        ui->productItemTreeView->setModel(productItemModel);    //ui에 표시할 제품Item모델 설정
+        ui->productItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
         /* 고객Item 검색 모델 객체 생성 및 헤더 명 설정*/
         searchClientModel = new QStandardItemModel(0, 3);
@@ -115,7 +115,7 @@ void OrderManagerForm::loadData()
         orderModel->setHeaderData(5, Qt::Horizontal, QObject::tr("Sum"));
         orderModel->setHeaderData(6, Qt::Horizontal, QObject::tr("Address"));
 
-        ui->orderTableView->setModel(orderModel);       //ui에 표시할 모델 설정
+        ui->orderTableView->setModel(orderModel);       //ui에 표시할 주문모델 설정
         ui->orderTableView->horizontalHeader()->setStyleSheet(
                     "QHeaderView { font-weight: bold; };");
         ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
@@ -178,7 +178,7 @@ void OrderManagerForm::delClient(int id)    //고객 id
                                                    id, -1, Qt::MatchFlags(Qt::MatchFixedString));
     foreach(auto ix, index) {
         clientItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
-        ui->clientTreeView->update();                //뷰 update
+        ui->clientItemTreeView->update();                //뷰 update
     }
 }
 
@@ -217,7 +217,7 @@ void OrderManagerForm::delProduct(int id)
                                                     id, -1, Qt::MatchFlags(Qt::MatchFixedString));
     foreach(auto ix, index) {
         productItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
-        ui->productTreeView->update();                //뷰 update
+        ui->productItemTreeView->update();                //뷰 update
     }
 }
 
@@ -238,7 +238,7 @@ void OrderManagerForm::modProduct(int id, QString name, QString price, QString s
 void OrderManagerForm::on_clientComboBox_activated(int index)
 {
     if(index == 0){
-        ui->clientTreeView->setModel(clientItemModel);
+        ui->clientItemTreeView->setModel(clientItemModel);
         ui->clientButton->setEnabled(false);
     }
     else ui->clientButton->setEnabled(true);
@@ -248,7 +248,7 @@ void OrderManagerForm::on_clientComboBox_activated(int index)
 void OrderManagerForm::on_productComboBox_activated(int index)
 {
     if(index == 0){
-        ui->productTreeView->setModel(productItemModel);
+        ui->productItemTreeView->setModel(productItemModel);
         ui->productButton->setEnabled(false);
     }
     else ui->productButton->setEnabled(true);
@@ -273,7 +273,7 @@ void OrderManagerForm::on_clientButton_clicked()
     /* 주소검색. 고객Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList addressIndex = clientItemModel->match(clientItemModel->index(0, 2), Qt::EditRole,
                                                           str, -1, Qt::MatchFlags(flag));
-    ui->clientTreeView->setModel(searchClientModel);    // 검색 시, 뷰의 세팅은 고객Item모델 -> 고객Item검색모델
+    ui->clientItemTreeView->setModel(searchClientModel);    // 검색 시, 뷰의 세팅은 고객Item모델 -> 고객Item검색모델
 
     switch (i){
     case 1: //id 검색
@@ -290,7 +290,7 @@ void OrderManagerForm::on_clientButton_clicked()
                 items.append(new QStandardItem(strings.at(i)));
             }
             searchClientModel->appendRow(items);
-            ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ui->clientItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
     case 2: //이름 검색
@@ -307,7 +307,7 @@ void OrderManagerForm::on_clientButton_clicked()
                 items.append(new QStandardItem(strings.at(i)));
             }
             searchClientModel->appendRow(items);
-            ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ui->clientItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
     case 3: //주소 검색
@@ -323,7 +323,7 @@ void OrderManagerForm::on_clientButton_clicked()
                 items.append(new QStandardItem(strings.at(i)));
             }
             searchClientModel->appendRow(items);
-            ui->clientTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ui->clientItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
 
@@ -349,7 +349,7 @@ void OrderManagerForm::on_productButton_clicked()
     QModelIndexList nameindex = productItemModel->match(productItemModel->index(0, 1), Qt::EditRole,
                                                         str, -1, Qt::MatchFlags(flag));
 
-    ui->productTreeView->setModel(searchProductModel);  // 검색 시, 뷰의 세팅은 제품 Item모델 -> 제품 Item검색모델
+    ui->productItemTreeView->setModel(searchProductModel);  // 검색 시, 뷰의 세팅은 제품 Item모델 -> 제품 Item검색모델
     switch (i){
     case 1: //id 검색
         /* 검색한 데이터와 id가 일치하면 뷰에 검색결과 출력 */
@@ -367,7 +367,7 @@ void OrderManagerForm::on_productButton_clicked()
             }
 
             searchProductModel->appendRow(items);
-            ui->productTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ui->productItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
     case 2: //이름 검색
@@ -386,7 +386,7 @@ void OrderManagerForm::on_productButton_clicked()
             }
 
             searchProductModel->appendRow(items);
-            ui->productTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+            ui->productItemTreeView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
         }
         break;
 
@@ -395,8 +395,9 @@ void OrderManagerForm::on_productButton_clicked()
     }
 }
 
+
 /* 고객 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
-void OrderManagerForm::on_clientTreeView_clicked(const QModelIndex &index)
+void OrderManagerForm::on_clientItemTreeView_clicked(const QModelIndex &index)
 {
     /* 클릭한 Index의 데이터를 가져옴 */
     QString client;
@@ -407,7 +408,7 @@ void OrderManagerForm::on_clientTreeView_clicked(const QModelIndex &index)
 }
 
 /* 제품 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
-void OrderManagerForm::on_productTreeView_clicked(const QModelIndex &index)
+void OrderManagerForm::on_productItemTreeView_clicked(const QModelIndex &index)
 {
     /* 클릭한 Index의 데이터를 가져옴 */
     QString product;
@@ -683,5 +684,4 @@ void OrderManagerForm::on_statePushButton_clicked()
     orderModel->setFilter("");
     orderModel->select();
 }
-
 

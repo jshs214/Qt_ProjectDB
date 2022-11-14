@@ -72,10 +72,9 @@ void ProductManagerForm::loadData()
         productModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Stock"));
         productModel->setHeaderData(4, Qt::Horizontal, QObject::tr("Type"));
 
-        ui->productTableView->setModel(productModel);   //ui에 표시할 모델 설정
+        ui->productTableView->setModel(productModel);   //ui에 표시할 제품모델 설정
         ui->productTableView->horizontalHeader()->setStyleSheet(
                     "QHeaderView { font-weight: bold; };");
-
     }
     /* 제품정보 데이터를 불러 올 때, 주문정보에 불러온 데이터를 시그널을 통해 전송 */
     for(int i = 0; i < productModel->rowCount(); i++) {

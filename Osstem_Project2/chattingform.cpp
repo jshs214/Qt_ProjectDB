@@ -428,6 +428,7 @@ void ChattingForm::loadData()
 /* 채팅방의 채팅 로그 저장 */
 void ChattingForm::saveData()
 {
+    if(ui->idLineEdit->text().length() && ui->nameLineEdit->text().length()){
     /* 저장되는 파일 명은 id,name */
     QString filename =ui->idLineEdit->text()+ "_" + ui->nameLineEdit->text();
 
@@ -441,6 +442,9 @@ void ChattingForm::saveData()
         out << v <<"\n";
     }
     file.close( );
+    }
+    else
+        qDebug()<<QString(tr("Chat logs for chat rooms are not saved."));
 }
 
 

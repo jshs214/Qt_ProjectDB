@@ -157,7 +157,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QTreeView" name="clientTreeView">
+          <widget class="QTreeView" name="clientItemTreeView">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -170,7 +170,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTreeView" name="productTreeView">
+          <widget class="QTreeView" name="productItemTreeView">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
@@ -433,8 +433,8 @@
   <tabstop>clientButton</tabstop>
   <tabstop>productLineEdit</tabstop>
   <tabstop>productButton</tabstop>
-  <tabstop>clientTreeView</tabstop>
-  <tabstop>productTreeView</tabstop>
+  <tabstop>clientItemTreeView</tabstop>
+  <tabstop>productItemTreeView</tabstop>
   <tabstop>idLineEdit</tabstop>
   <tabstop>cIdLineEdit</tabstop>
   <tabstop>pIdLineEdit</tabstop>

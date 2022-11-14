@@ -67,8 +67,8 @@ private slots:
     void on_productButton_clicked();    //제품
 
     /* 고객, 제품 데이터 클릭 시 LineEdit에 입력하는 슬롯 */
-    void on_clientTreeView_clicked(const QModelIndex &index);
-    void on_productTreeView_clicked(const QModelIndex &index);
+    void on_clientItemTreeView_clicked(const QModelIndex &index);
+    void on_productItemTreeView_clicked(const QModelIndex &index);
 
     /* 주문정보 추가, 변경, 삭제, 검색 */
     void on_addPushButton_clicked();    //추가

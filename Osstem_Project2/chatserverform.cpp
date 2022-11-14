@@ -538,16 +538,17 @@ void ChatServerForm::sendLogInOut(QTcpSocket* sock , const char* data)
 void ChatServerForm::sendChatList()
 {
     /* 바이너리구조의 데이터스트림 생성, 소켓에 보낼 데이터를 채워 전송 */
+    QString data;
     QByteArray sendArray;
     QDataStream out(&sendArray, QIODevice::WriteOnly);
     out << Chat_List;
-
     /* 현재 채팅방 참여인원 전달 */
     foreach(auto item, ui->clientTreeWidget->findItems(tr("Chat"), Qt::MatchFixedString, 0)) {
         QString name = item->text(1);
         QString id = item->text(2);
         sendArray.append(",");
         sendArray.append(name.toStdString()+"("+id.toStdString()+")");
+        data += "," + (name+"("+id+")") ;
     }
     foreach(QTcpSocket *sock, clientSocketHash.values()) {
         foreach(auto item, ui->clientTreeWidget->findItems(clientPortIDHash[sock->peerPort()],

@@ -41,9 +41,9 @@ struct qt_meta_stringdata_OrderManagerForm_t {
     char stringdata15[29];
     char stringdata16[24];
     char stringdata17[25];
-    char stringdata18[26];
+    char stringdata18[30];
     char stringdata19[12];
-    char stringdata20[27];
+    char stringdata20[31];
     char stringdata21[25];
     char stringdata22[28];
     char stringdata23[11];
@@ -75,17 +75,17 @@ static const qt_meta_stringdata_OrderManagerForm_t qt_meta_stringdata_OrderManag
         QT_MOC_LITERAL(211, 28),  // "on_productComboBox_activated"
         QT_MOC_LITERAL(240, 23),  // "on_clientButton_clicked"
         QT_MOC_LITERAL(264, 24),  // "on_productButton_clicked"
-        QT_MOC_LITERAL(289, 25),  // "on_clientTreeView_clicked"
-        QT_MOC_LITERAL(315, 11),  // "QModelIndex"
-        QT_MOC_LITERAL(327, 26),  // "on_productTreeView_clicked"
-        QT_MOC_LITERAL(354, 24),  // "on_addPushButton_clicked"
-        QT_MOC_LITERAL(379, 27),  // "on_modifyPushButton_clicked"
-        QT_MOC_LITERAL(407, 10),  // "removeItem"
-        QT_MOC_LITERAL(418, 27),  // "on_searchPushButton_clicked"
-        QT_MOC_LITERAL(446, 28),  // "on_stockLineEdit_textChanged"
-        QT_MOC_LITERAL(475, 4),  // "arg1"
-        QT_MOC_LITERAL(480, 25),  // "on_orderTableView_clicked"
-        QT_MOC_LITERAL(506, 26)   // "on_statePushButton_clicked"
+        QT_MOC_LITERAL(289, 29),  // "on_clientItemTreeView_clicked"
+        QT_MOC_LITERAL(319, 11),  // "QModelIndex"
+        QT_MOC_LITERAL(331, 30),  // "on_productItemTreeView_clicked"
+        QT_MOC_LITERAL(362, 24),  // "on_addPushButton_clicked"
+        QT_MOC_LITERAL(387, 27),  // "on_modifyPushButton_clicked"
+        QT_MOC_LITERAL(415, 10),  // "removeItem"
+        QT_MOC_LITERAL(426, 27),  // "on_searchPushButton_clicked"
+        QT_MOC_LITERAL(454, 28),  // "on_stockLineEdit_textChanged"
+        QT_MOC_LITERAL(483, 4),  // "arg1"
+        QT_MOC_LITERAL(488, 25),  // "on_orderTableView_clicked"
+        QT_MOC_LITERAL(514, 26)   // "on_statePushButton_clicked"
     },
     "OrderManagerForm",
     "productAddKeySent",
@@ -105,9 +105,9 @@ static const qt_meta_stringdata_OrderManagerForm_t qt_meta_stringdata_OrderManag
     "on_productComboBox_activated",
     "on_clientButton_clicked",
     "on_productButton_clicked",
-    "on_clientTreeView_clicked",
+    "on_clientItemTreeView_clicked",
     "QModelIndex",
-    "on_productTreeView_clicked",
+    "on_productItemTreeView_clicked",
     "on_addPushButton_clicked",
     "on_modifyPushButton_clicked",
     "removeItem",
@@ -212,8 +212,8 @@ void OrderManagerForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int
         case 12: _t->on_productComboBox_activated((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 13: _t->on_clientButton_clicked(); break;
         case 14: _t->on_productButton_clicked(); break;
-        case 15: _t->on_clientTreeView_clicked((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
-        case 16: _t->on_productTreeView_clicked((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
+        case 15: _t->on_clientItemTreeView_clicked((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
+        case 16: _t->on_productItemTreeView_clicked((*reinterpret_cast< std::add_pointer_t<QModelIndex>>(_a[1]))); break;
         case 17: _t->on_addPushButton_clicked(); break;
         case 18: _t->on_modifyPushButton_clicked(); break;
         case 19: _t->removeItem(); break;

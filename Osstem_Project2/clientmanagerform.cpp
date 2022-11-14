@@ -59,7 +59,6 @@ void ClientManagerForm::loadData()
     db.setDatabaseName("client.db");    // DB명은 client.db
     if (db.open()) {
         QSqlQuery query(db);            // db 를 사용하여 QSqlQuery 객체를 생성
-
         /* SQL 쿼리문을 사용해 고객 테이블 생성 */
         query.exec("CREATE TABLE IF NOT EXISTS clientList(id INTEGER Primary Key, name VARCHAR(30) NOT NULL,"
                    " phoneNumber VARCHAR(20) NOT NULL, address VARCHAR(50));");
@@ -74,7 +73,7 @@ void ClientManagerForm::loadData()
         clientModel->setHeaderData(2, Qt::Horizontal, QObject::tr("Phone Number"));
         clientModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Address"));
 
-        ui->clientTableView->setModel(clientModel); //ui에 표시할 모델 설정
+        ui->clientTableView->setModel(clientModel); //ui에 표시할 고객모델 설정
         ui->clientTableView->horizontalHeader()->setStyleSheet(
                     "QHeaderView { font-weight: bold; };");
     }
@@ -199,7 +198,6 @@ void ClientManagerForm::removeItem()
 void ClientManagerForm::on_searchPushButton_clicked()
 {
     QString searchValue = ui->searchLineEdit->text();   //검색할 데이터 저장
-
     int i = ui->searchComboBox->currentIndex();         //무엇으로 검색할지 콤보박스의 인덱스를 가져옴
     switch (i){
     case 0: //id 검색
