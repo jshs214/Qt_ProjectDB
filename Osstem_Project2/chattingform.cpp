@@ -209,6 +209,7 @@ void ChattingForm::receiveData( )
         ui->fileButton->setEnabled(true);
 
         chattingData.append(QString(data));     //채팅데이터 저장
+
         break;
     case Chat_KickOut:  //강퇴 당한 경우 == chat_out
     {
