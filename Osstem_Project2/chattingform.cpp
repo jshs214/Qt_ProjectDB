@@ -1,6 +1,8 @@
 #include "chattingform.h"
 #include "ui_chattingform.h"
 
+#include "chattingthread.h"
+
 #include <QTextEdit>
 #include <QLineEdit>
 #include <QPushButton>
@@ -80,9 +82,15 @@ ChattingForm::ChattingForm(QWidget *parent) :
                                         ui->serverPort->text( ).toInt( ));
             clientSocket->waitForConnected();       //접속 끝날때 까지 대기
 
+
             /* 프로토콜 생성해서 서버로 전송 */
             sendProtocol(Chat_Login, (ui->nameLineEdit->text().toStdString()+","+
                                       ui->idLineEdit->text().toStdString()).data() );
+            loadData();
+
+            chattingLog = new ChattingThread(ui->idLineEdit->text().toInt(),
+                                             ui->nameLineEdit->text());
+            chattingLog->start();
 
         }
         else if(ui->connectButton->text() == tr("Chat in"))  {        /* Chat in 버튼 클릭 시 Chat in */
@@ -95,8 +103,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->sentButton->setEnabled(true);
             ui->fileButton->setEnabled(true);
 
-            chattingData.clear();       //중복 방지
-            loadData();
 
         }
         else if(ui->connectButton->text() == tr("Chat Out"))  {       /* Chat Out 버튼 클릭 시 Chat Out */
@@ -109,8 +115,6 @@ ChattingForm::ChattingForm(QWidget *parent) :
             ui->sentButton->setDisabled(true);
             ui->fileButton->setDisabled(true);
 
-            saveData();     /* 채팅방의 채팅 로그 저장 */
-            ui->message->clear();
         }
     } );
 
@@ -143,7 +147,6 @@ ChattingForm::~ChattingForm()
 /* 창이 닫힐 때 서버에 연결 접속 메시지를 보내고 종료 */
 void ChattingForm::closeEvent(QCloseEvent*)
 {
-    saveData();     /* 채팅방의 채팅 로그 저장 */
 
     if(ui->connectButton->text() == tr("Log In"))   return; // 로그인 안된 상태에서는 소켓 connect이 안되있으므로 예외처리
 
@@ -202,8 +205,7 @@ void ChattingForm::receiveData( )
         ui->sentButton->setEnabled(true);
         ui->fileButton->setEnabled(true);
 
-        chattingData.append(QString(data));     //채팅데이터 저장
-
+        chattingLog->appendData(QString(data));
         break;
     case Chat_KickOut:  //강퇴 당한 경우 == chat_out
     {
@@ -221,8 +223,6 @@ void ChattingForm::receiveData( )
         QString data ="";
         sendProtocol(Chat_List,data.toStdString().data());
 
-        saveData();     /* 채팅방의 채팅 로그 저장 */
-        ui->message->clear();
         break;
     }
     case Chat_Invite:   //초대 받은 경우
@@ -242,9 +242,6 @@ void ChattingForm::receiveData( )
         /* 프로토콜 생성해서 서버로 전송 */
         QString data ="";
         sendProtocol(Chat_List,data.toStdString().data());
-
-        chattingData.clear();       //중복 방지
-        loadData();     /* 채팅방의 채팅 로그 불러오기 */
 
         break;
     }
@@ -278,8 +275,8 @@ void ChattingForm::sendData(  )
         bytearray = str.toUtf8( );
         ui->message->append(tr("Me : ") + str);
         sendProtocol(Chat_Talk, bytearray.data()); // 프로토콜 생성해서 서버로 전송
-        chattingData.append(tr("Me : ") + str); //채팅데이터 저장
 
+        chattingLog->appendData(tr("Me : ") + str);
     }
 }
 
@@ -363,6 +360,11 @@ void ChattingForm::disconnect( )
     ui->logoutButton->setDisabled(true);
     ui->serverIP->setEnabled(true);
     ui->serverPort->setEnabled(true);
+
+    if(chattingLog!=nullptr){
+    chattingLog->saveData();
+    chattingLog->terminate();
+    }
 }
 
 /* 프로토콜 생성해서 서버로 전송 */
@@ -382,7 +384,11 @@ void ChattingForm::sendProtocol(Chat_Status type, char* data, int size)
 /* 로그아웃 슬롯 */
 void ChattingForm::on_logoutButton_clicked()
 {
-    saveData();     /* 채팅방의 채팅 로그 저장 */
+
+    if(chattingLog!=nullptr){
+    chattingLog->saveData();
+    chattingLog->terminate();
+    }
 
     sendProtocol(Chat_LogOut, ui->nameLineEdit->text().toStdString().data()); // 프로토콜 생성해서 서버로 전송
     ui->message->clear();
@@ -395,7 +401,7 @@ void ChattingForm::on_logoutButton_clicked()
 
 /* 채팅방의 채팅 로그 불러오기 */
 void ChattingForm::loadData()
-{    
+{
     /* 불러오는 파일 명은 id,name */
     QString filename =ui->idLineEdit->text()+ "_" + ui->nameLineEdit->text();
 
@@ -407,32 +413,10 @@ void ChattingForm::loadData()
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
-        chattingData.append(line);
         ui->message->append(line);
     }
     file.close( );
 }
 
-/* 채팅방의 채팅 로그 저장 */
-void ChattingForm::saveData()
-{
-    if(ui->idLineEdit->text().length() && ui->nameLineEdit->text().length()){
-    /* 저장되는 파일 명은 id,name */
-    QString filename =ui->idLineEdit->text()+ "_" + ui->nameLineEdit->text();
-
-    QFile file("../data/chattingDB/" + filename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text ))
-        return;
-
-    /* 채팅 로그의 데이터를 \n 마다 저장 */
-    QTextStream out(&file);
-    for (const auto& v : qAsConst(chattingData)) {
-        out << v <<"\n";
-    }
-    file.close( );
-    }
-    else
-        qDebug()<<QString(tr("Chat logs for chat rooms are not saved."));
-}
 
 

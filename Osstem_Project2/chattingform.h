@@ -9,6 +9,7 @@
 class QTcpSocket;
 class QFile;
 class QProgressDialog;
+class ChattingThread;
 
 namespace Ui {
 class ChattingForm;
@@ -26,7 +27,6 @@ public:
     ~ChattingForm();
 
     void loadData();        /* 채팅방의 채팅 로그 불러오기 */
-    void saveData();        /* 채팅방의 채팅 로그 저장 */
 
 private:
     Ui::ChattingForm *ui;
@@ -41,8 +41,9 @@ private:
     qint64 totalSize;       // 전체 파일의 크기
     QByteArray outBlock;    // 전송을 위한 데이터
     bool isSent;            // 파일 서버에 접속되었는지 확인
-    QStringList chattingData;   //채팅방의 채팅데이터를 저장하는 해시
 
+    QStringList loadChatLog;
+    ChattingThread* chattingLog;   // 로그 저장을 위한 스레드
 private slots:
     void receiveData( );		/* 서버에서 데이터가 올 때 */
     void sendData( );           /* 서버로 메시지 전송 슬롯 */

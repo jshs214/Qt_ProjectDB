@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     chatserverform.cpp \
     chattingform.cpp \
+    chattingthread.cpp \
     clientmanagerform.cpp \
     logthread.cpp \
     main.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     chatserverform.h \
     chattingform.h \
+    chattingthread.h \
     clientmanagerform.h \
     logthread.h \
     mainwindow.h \
