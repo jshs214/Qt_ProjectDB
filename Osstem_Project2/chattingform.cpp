@@ -82,11 +82,10 @@ ChattingForm::ChattingForm(QWidget *parent) :
                                         ui->serverPort->text( ).toInt( ));
             clientSocket->waitForConnected();       //접속 끝날때 까지 대기
 
-
             /* 프로토콜 생성해서 서버로 전송 */
             sendProtocol(Chat_Login, (ui->nameLineEdit->text().toStdString()+","+
                                       ui->idLineEdit->text().toStdString()).data() );
-            loadData();
+            loadData();     /* 채팅방의 채팅 로그 불러오기 */
 
             chattingLog = new ChattingThread(ui->idLineEdit->text().toInt(),
                                              ui->nameLineEdit->text());

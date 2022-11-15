@@ -66,11 +66,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* 고객 정보 추가, 제거, 변경시 채팅서버에 정보 전송 시그널 */
     connect(clientForm, SIGNAL(clientAddToServer(int, QString)),
-            serverForm, SLOT(addClient(int, QString)),  Qt::QueuedConnection);
+            serverForm, SLOT(addClient(int, QString)));
     connect(clientForm, SIGNAL(clientModToServer(int, QString)),
-            serverForm, SLOT(modClient(int, QString)),  Qt::QueuedConnection);
+            serverForm, SLOT(modClient(int, QString)));
     connect(clientForm, SIGNAL(clientRevToServer(int)),
-            serverForm, SLOT(remClient(int)),  Qt::QueuedConnection);
+            serverForm, SLOT(remClient(int)));
 
     /* ui 설정 */
     ui->stackedWidget->insertWidget(0, clientForm);

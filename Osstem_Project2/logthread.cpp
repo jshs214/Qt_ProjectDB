@@ -33,7 +33,6 @@ void LogThread::saveData()
         if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
             return;
         QTextStream out(&file);
-
         foreach(auto item, logList) {
             out << item->text(0) << ", ";
             out << item->text(1) << ", ";

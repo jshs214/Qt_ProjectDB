@@ -3,6 +3,7 @@
 
 #include <QThread>
 
+/* 클라이언트별 채팅로그저장을 위한 클래스 */
 class ChattingThread : public QThread
 {
     Q_OBJECT

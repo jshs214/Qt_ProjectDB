@@ -15,7 +15,7 @@ void ChattingThread::run()
 {
     Q_FOREVER {
         saveData();
-        sleep(30);      // 1분마다 저장
+        sleep(60);      // 1분마다 저장
     }
 }
 /* 로그 입력 */

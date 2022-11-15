@@ -42,8 +42,7 @@ private:
     QByteArray outBlock;    // 전송을 위한 데이터
     bool isSent;            // 파일 서버에 접속되었는지 확인
 
-    QStringList loadChatLog;
-    ChattingThread* chattingLog;   // 로그 저장을 위한 스레드
+    ChattingThread* chattingLog;   // 채팅로그 저장을 위한 스레드
 private slots:
     void receiveData( );		/* 서버에서 데이터가 올 때 */
     void sendData( );           /* 서버로 메시지 전송 슬롯 */
