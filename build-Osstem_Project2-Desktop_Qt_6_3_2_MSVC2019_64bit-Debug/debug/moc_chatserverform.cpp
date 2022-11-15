@@ -31,7 +31,7 @@ struct qt_meta_stringdata_ChatServerForm_t {
     char stringdata5[14];
     char stringdata6[12];
     char stringdata7[13];
-    char stringdata8[47];
+    char stringdata8[48];
     char stringdata9[4];
     char stringdata10[13];
     char stringdata11[8];
@@ -51,13 +51,13 @@ static const qt_meta_stringdata_ChatServerForm_t qt_meta_stringdata_ChatServerFo
         QT_MOC_LITERAL(46, 13),  // "clientConnect"
         QT_MOC_LITERAL(60, 11),  // "receiveData"
         QT_MOC_LITERAL(72, 12),  // "removeClient"
-        QT_MOC_LITERAL(85, 46),  // "on_clientTreeWidget_customCon..."
-        QT_MOC_LITERAL(132, 3),  // "pos"
-        QT_MOC_LITERAL(136, 12),  // "inviteClient"
-        QT_MOC_LITERAL(149, 7),  // "kickOut"
-        QT_MOC_LITERAL(157, 16),  // "acceptConnection"
-        QT_MOC_LITERAL(174, 10),  // "readClient"
-        QT_MOC_LITERAL(185, 21)   // "on_sendButton_clicked"
+        QT_MOC_LITERAL(85, 47),  // "on_svClientTableView_customCo..."
+        QT_MOC_LITERAL(133, 3),  // "pos"
+        QT_MOC_LITERAL(137, 12),  // "inviteClient"
+        QT_MOC_LITERAL(150, 7),  // "kickOut"
+        QT_MOC_LITERAL(158, 16),  // "acceptConnection"
+        QT_MOC_LITERAL(175, 10),  // "readClient"
+        QT_MOC_LITERAL(186, 21)   // "on_sendButton_clicked"
     },
     "ChatServerForm",
     "addClient",
@@ -67,7 +67,7 @@ static const qt_meta_stringdata_ChatServerForm_t qt_meta_stringdata_ChatServerFo
     "clientConnect",
     "receiveData",
     "removeClient",
-    "on_clientTreeWidget_customContextMenuRequested",
+    "on_svClientTableView_customContextMenuRequested",
     "pos",
     "inviteClient",
     "kickOut",
@@ -133,7 +133,7 @@ void ChatServerForm::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 3: _t->clientConnect(); break;
         case 4: _t->receiveData(); break;
         case 5: _t->removeClient(); break;
-        case 6: _t->on_clientTreeWidget_customContextMenuRequested((*reinterpret_cast< std::add_pointer_t<QPoint>>(_a[1]))); break;
+        case 6: _t->on_svClientTableView_customContextMenuRequested((*reinterpret_cast< std::add_pointer_t<QPoint>>(_a[1]))); break;
         case 7: _t->inviteClient(); break;
         case 8: _t->kickOut(); break;
         case 9: _t->acceptConnection(); break;

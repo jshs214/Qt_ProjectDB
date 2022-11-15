@@ -5,8 +5,8 @@
     <name>ChatServerForm</name>
     <message>
         <location filename="chatserverform.ui" line="14"/>
-        <location filename="chatserverform.cpp" line="37"/>
-        <location filename="chatserverform.cpp" line="46"/>
+        <location filename="chatserverform.cpp" line="72"/>
+        <location filename="chatserverform.cpp" line="81"/>
         <source>Chatting Server</source>
         <translation type="unfinished"></translation>
     </message>
@@ -22,7 +22,7 @@
     </message>
     <message>
         <location filename="chatserverform.ui" line="48"/>
-        <location filename="chatserverform.ui" line="168"/>
+        <location filename="chatserverform.ui" line="147"/>
         <source>IP</source>
         <translation></translation>
     </message>
@@ -37,137 +37,158 @@
         <translation type="unfinished">활동 중</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="88"/>
-        <location filename="chatserverform.ui" line="129"/>
         <source>Status</source>
-        <translation type="unfinished">접속상태</translation>
+        <translation type="obsolete">접속상태</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="93"/>
-        <location filename="chatserverform.ui" line="134"/>
-        <location filename="chatserverform.ui" line="183"/>
+        <location filename="chatserverform.ui" line="162"/>
         <source>Name</source>
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="98"/>
-        <location filename="chatserverform.ui" line="139"/>
-        <location filename="chatserverform.ui" line="178"/>
+        <location filename="chatserverform.ui" line="157"/>
         <source>ID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="109"/>
+        <location filename="chatserverform.ui" line="94"/>
         <source>Client List</source>
         <translation>고객리스트</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="154"/>
+        <location filename="chatserverform.ui" line="133"/>
         <source>Chatting Log</source>
         <translation>채팅로그</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="173"/>
+        <location filename="chatserverform.ui" line="152"/>
         <source>Port</source>
         <translation>포트번호</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="188"/>
+        <location filename="chatserverform.ui" line="167"/>
         <source>Message</source>
         <translation>메시지</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="193"/>
+        <location filename="chatserverform.ui" line="172"/>
         <source>Time</source>
         <translation>시간</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="203"/>
+        <location filename="chatserverform.ui" line="182"/>
         <source>Clear</source>
         <translation>지우기</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="210"/>
+        <location filename="chatserverform.ui" line="189"/>
         <source>Save</source>
         <translation>저장</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="219"/>
+        <location filename="chatserverform.ui" line="198"/>
         <source>Manager_Chatting</source>
         <translation>관리자 채팅</translation>
     </message>
     <message>
-        <location filename="chatserverform.ui" line="238"/>
+        <location filename="chatserverform.ui" line="217"/>
         <source>Send</source>
         <translation>전송</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="38"/>
-        <location filename="chatserverform.cpp" line="47"/>
+        <location filename="chatserverform.cpp" line="73"/>
+        <location filename="chatserverform.cpp" line="82"/>
         <source>Unable to start the server: %1.</source>
         <translation>%1 서버를 시작할 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="52"/>
+        <location filename="chatserverform.cpp" line="87"/>
         <source>Start listening ...</source>
         <translation>수신 시작.....</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="55"/>
+        <location filename="chatserverform.cpp" line="90"/>
         <source>&amp;Invite</source>
         <translation>초대</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="56"/>
-        <location filename="chatserverform.cpp" line="342"/>
+        <location filename="chatserverform.cpp" line="91"/>
+        <location filename="chatserverform.cpp" line="447"/>
         <source>Invite</source>
         <translation>초대</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="58"/>
+        <location filename="chatserverform.cpp" line="93"/>
         <source>&amp;Kick out</source>
         <translation>강퇴</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="76"/>
-        <location filename="chatserverform.cpp" line="77"/>
+        <location filename="chatserverform.cpp" line="110"/>
+        <location filename="chatserverform.cpp" line="111"/>
         <source>The server is running on port %1.</source>
         <translation>서버가 %1포트에서 실행중입니다.</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="131"/>
+        <location filename="chatserverform.cpp" line="138"/>
+        <location filename="chatserverform.cpp" line="152"/>
+        <location filename="chatserverform.cpp" line="376"/>
+        <location filename="chatserverform.cpp" line="380"/>
+        <location filename="chatserverform.cpp" line="428"/>
+        <source>Off</source>
+        <translation type="unfinished">오프라인</translation>
+    </message>
+    <message>
+        <location filename="chatserverform.cpp" line="176"/>
         <source>new connection is established...</source>
         <translation>새로운 연결 설정중...</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="197"/>
-        <location filename="chatserverform.cpp" line="198"/>
-        <location filename="chatserverform.cpp" line="222"/>
-        <location filename="chatserverform.cpp" line="345"/>
-        <location filename="chatserverform.cpp" line="371"/>
-        <location filename="chatserverform.cpp" line="492"/>
-        <location filename="chatserverform.cpp" line="546"/>
+        <source>LogIn</source>
+        <translation type="obsolete">로그인 창</translation>
+    </message>
+    <message>
+        <location filename="chatserverform.cpp" line="219"/>
+        <location filename="chatserverform.cpp" line="228"/>
+        <location filename="chatserverform.cpp" line="341"/>
+        <location filename="chatserverform.cpp" line="346"/>
+        <location filename="chatserverform.cpp" line="448"/>
+        <location filename="chatserverform.cpp" line="529"/>
+        <source>On</source>
+        <translation>로그인</translation>
+    </message>
+    <message>
+        <location filename="chatserverform.cpp" line="257"/>
+        <location filename="chatserverform.cpp" line="261"/>
+        <location filename="chatserverform.cpp" line="269"/>
+        <location filename="chatserverform.cpp" line="291"/>
+        <location filename="chatserverform.cpp" line="450"/>
+        <location filename="chatserverform.cpp" line="487"/>
+        <location filename="chatserverform.cpp" line="495"/>
+        <location filename="chatserverform.cpp" line="635"/>
+        <location filename="chatserverform.cpp" line="690"/>
         <source>Chat</source>
         <translation>활동 중</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="410"/>
+        <location filename="chatserverform.cpp" line="551"/>
         <source>Connected, preparing to receive files!</source>
         <translation>연결됨, 파일 수신 준비중 !</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="418"/>
+        <location filename="chatserverform.cpp" line="559"/>
         <source>Receiving file ...</source>
         <translation>파일을 받는중...</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="470"/>
+        <location filename="chatserverform.cpp" line="610"/>
         <source>%1 receive completed</source>
         <translation>%1 수신 완료</translation>
     </message>
     <message>
-        <location filename="chatserverform.cpp" line="487"/>
-        <location filename="chatserverform.cpp" line="499"/>
+        <location filename="chatserverform.cpp" line="627"/>
+        <location filename="chatserverform.cpp" line="642"/>
+        <location filename="chatserverform.cpp" line="653"/>
+        <location filename="chatserverform.cpp" line="654"/>
         <source>Manager</source>
         <translation type="unfinished">관리자</translation>
     </message>
@@ -211,9 +232,9 @@
     </message>
     <message>
         <location filename="chattingform.ui" line="146"/>
-        <location filename="chattingform.cpp" line="77"/>
-        <location filename="chattingform.cpp" line="154"/>
-        <location filename="chattingform.cpp" line="375"/>
+        <location filename="chattingform.cpp" line="79"/>
+        <location filename="chattingform.cpp" line="150"/>
+        <location filename="chattingform.cpp" line="358"/>
         <source>Log In</source>
         <translation>로그인</translation>
     </message>
@@ -238,92 +259,87 @@
         <translation>전송</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="88"/>
-        <location filename="chattingform.cpp" line="113"/>
-        <location filename="chattingform.cpp" line="188"/>
-        <location filename="chattingform.cpp" line="223"/>
+        <location filename="chattingform.cpp" line="95"/>
+        <location filename="chattingform.cpp" line="112"/>
+        <location filename="chattingform.cpp" line="184"/>
+        <location filename="chattingform.cpp" line="219"/>
         <source>Chat in</source>
         <translation>채팅방 입장</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="93"/>
-        <location filename="chattingform.cpp" line="108"/>
-        <location filename="chattingform.cpp" line="245"/>
+        <location filename="chattingform.cpp" line="100"/>
+        <location filename="chattingform.cpp" line="107"/>
+        <location filename="chattingform.cpp" line="238"/>
         <source>Chat Out</source>
         <translation>채팅방 나가기</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="123"/>
+        <location filename="chattingform.cpp" line="120"/>
         <source>Chat Client</source>
         <translation>고객 채팅</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="186"/>
+        <location filename="chattingform.cpp" line="182"/>
         <source>Success</source>
         <translation>성공</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="187"/>
+        <location filename="chattingform.cpp" line="183"/>
         <source>Successed Login</source>
         <translation>로그인 성공하였습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="199"/>
+        <location filename="chattingform.cpp" line="195"/>
         <source>Error</source>
         <translation>오류</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="200"/>
+        <location filename="chattingform.cpp" line="196"/>
         <source>Failed Login</source>
         <translation>로그인 실패하였습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="218"/>
-        <location filename="chattingform.cpp" line="240"/>
-        <location filename="chattingform.cpp" line="369"/>
+        <location filename="chattingform.cpp" line="214"/>
+        <location filename="chattingform.cpp" line="233"/>
+        <location filename="chattingform.cpp" line="352"/>
         <source>Chatting Client</source>
         <translation>고객 채팅</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="219"/>
+        <location filename="chattingform.cpp" line="215"/>
         <source>Kick out from Server</source>
         <translation>서버로부터 강퇴당했습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="241"/>
+        <location filename="chattingform.cpp" line="234"/>
         <source>Invited from Server</source>
         <translation>서버로부터 초대받았습니다.</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="292"/>
-        <location filename="chattingform.cpp" line="294"/>
+        <location filename="chattingform.cpp" line="275"/>
+        <location filename="chattingform.cpp" line="278"/>
         <source>Me : </source>
         <translation>나 : </translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="312"/>
+        <location filename="chattingform.cpp" line="295"/>
         <source>file %1 is opened</source>
         <translation>파일 %1 열렸습니다</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="344"/>
+        <location filename="chattingform.cpp" line="327"/>
         <source>Sending file %1</source>
         <translation>파일을 %1 전송중</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="361"/>
+        <location filename="chattingform.cpp" line="344"/>
         <source>File sending completed!</source>
         <translation>파일 전송 완료!</translation>
     </message>
     <message>
-        <location filename="chattingform.cpp" line="370"/>
+        <location filename="chattingform.cpp" line="353"/>
         <source>Disconnect from Server</source>
         <translation>서버에서 연결 해제</translation>
-    </message>
-    <message>
-        <location filename="chattingform.cpp" line="447"/>
-        <source>Chat logs for chat rooms are not saved.</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -921,10 +937,24 @@ You can order up to %0.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="chatserverform.cpp" line="52"/>
+        <location filename="chatserverform.cpp" line="59"/>
+        <source>Status</source>
+        <translation type="unfinished">접속상태</translation>
+    </message>
+    <message>
+        <location filename="chatserverform.cpp" line="53"/>
+        <location filename="chatserverform.cpp" line="60"/>
         <location filename="clientmanagerform.cpp" line="72"/>
         <location filename="productmanagerform.cpp" line="70"/>
         <source>Name</source>
         <translation type="unfinished">이름</translation>
+    </message>
+    <message>
+        <location filename="chatserverform.cpp" line="54"/>
+        <location filename="chatserverform.cpp" line="61"/>
+        <source>id</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="clientmanagerform.cpp" line="73"/>
@@ -943,10 +973,14 @@ You can order up to %0.</source>
         <translation type="unfinished">주문번호</translation>
     </message>
     <message>
-        <location filename="ordermanagerform.cpp" line="111"/>
         <source>ClientID</source>
         <oldsource>Client</oldsource>
-        <translation type="unfinished">고객관리</translation>
+        <translation type="obsolete">고객관리</translation>
+    </message>
+    <message>
+        <location filename="ordermanagerform.cpp" line="111"/>
+        <source>고객ID</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ordermanagerform.cpp" line="112"/>
