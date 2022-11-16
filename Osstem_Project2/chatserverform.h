@@ -63,8 +63,8 @@ private:
     void sendLogInOut(QTcpSocket* sock , const char* data);     /* 로그인 성공 유무를 보내는 메서드 */
     void sendChatList();    /* Chat_List로 현재 채팅방 참여인원 전달 */
 
-    QSqlTableModel *serverClientModel;
-    QStandardItemModel *chattingModel;  //고객검색Item모델
+    QSqlTableModel *serverClientModel;  //채팅사용자의 모델
+    QStandardItemModel *chattingModel;  //채팅중인 사용자 모델
 private slots:
     void addClient(int, QString);          /* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */
     void modClient(int, QString);          /* 고객의 데이터가 변경되면 서버에도 추가하는 슬롯 */
