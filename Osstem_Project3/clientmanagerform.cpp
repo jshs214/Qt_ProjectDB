@@ -187,12 +187,14 @@ void ClientManagerForm::removeItem()
     emit clientDelToOrder(sendId);  //삭제한 고객 id
     emit clientRevToServer(sendId); //삭제한 고객 id
 
-    if(index.isValid()) {
-        clientModel->removeRow(index.row());        //모델의 현재 행 삭제
-        clientModel->select();                      //모델의 데이터 조회
-        ui->clientTableView->update();              //뷰 update
-    }
+    QSqlQuery query(clientModel->database());   //QSqlQuery 객체(고객모델)
+    query.prepare("DELETE FROM clientList WHERE id = ?"); //sql쿼리문 준비
+    /* sql쿼리문에 값 바인딩 */
+    query.bindValue(0, QString::number(sendId));
+    query.exec();           //sql 쿼리 실행
+    clientModel->select();  //모델의 데이터 조회
 }
+
 
 /* 고객정보검색을 위한 슬롯 */
 void ClientManagerForm::on_searchPushButton_clicked()

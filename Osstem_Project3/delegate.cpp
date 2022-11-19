@@ -2,17 +2,7 @@
 
 #include <QVector>
 
-
-QVector<int> Delegate::greenRows() const
-{
-    return m_greenRows;
-}
-QVector<int> Delegate::grayRows() const
-{
-    return m_grayRows;
-}
-
-
+/* 벡터에 index 값을 받아오는 set함수 */
 void Delegate::setGreenRows(const QVector<int> &rows)
 {
     m_greenRows = (rows);
@@ -25,8 +15,8 @@ void Delegate::setGrayRows(const QVector<int> &rows)
 
 void Delegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const {
     QStyledItemDelegate::initStyleOption(option, index);
-    //QVariant value = index.data();
 
+    /* 행에 index에 따라 배경색 회색, 초록색 설정 */
     if(m_greenRows.contains(index.row())){
         option->backgroundBrush = QBrush(QColor("lightgreen"));
     }

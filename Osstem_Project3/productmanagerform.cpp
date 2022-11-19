@@ -52,7 +52,7 @@ ProductManagerForm::~ProductManagerForm()
 /* 제품정보 DB의 데이터를 불러오는 메서드 */
 void ProductManagerForm::loadData()
 {
-    /*  Qt에서 지원하는 데이터베이스 드라이버 QSQLITE에 고객 DB 객체 선언  */
+    /*  Qt에서 지원하는 데이터베이스 드라이버 QSQLITE에 제품 DB 객체 선언  */
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "productConnection");
     db.setDatabaseName("product.db");   // DB명은 product.db
     if (db.open( )) {
@@ -199,11 +199,12 @@ void ProductManagerForm::removeItem()
     /* 삭제한 제품ID를 주문정보관리에 전송 시그널 */
     emit productDelToOrder(sendId);
 
-    if(index.isValid()) {
-        productModel->removeRow(index.row());   //모델의 현재 행 삭제
-        productModel->select();                 //모델의 데이터 조회
-        ui->productTableView->update();         //뷰 update
-    }
+    QSqlQuery query(productModel->database());   //QSqlQuery 객체(고객모델)
+    query.prepare("DELETE FROM productList WHERE id = ?"); //sql쿼리문 준비
+    /* sql쿼리문에 값 바인딩 */
+    query.bindValue(0, QString::number(sendId));
+    query.exec();           //sql 쿼리 실행
+    productModel->select();  //모델의 데이터 조회
 }
 
 /* 고객정보검색을 위한 슬롯 */

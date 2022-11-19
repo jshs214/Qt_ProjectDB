@@ -180,6 +180,7 @@ void OrderManagerForm::delClient(int id)    //고객 id
         clientItemModel->removeRow(ix.row());        //모델의 현재 행 삭제
         ui->clientItemTreeView->update();                //뷰 update
     }
+
 }
 
 /* 고객정보 데이터 변경 */
@@ -602,11 +603,15 @@ void OrderManagerForm::removeItem()
         result = productStock.toInt() + delStock.toInt();                           //주문취소 후 재고량
         searchProductModel->setItem(ix.row(), 3, new QStandardItem(QString::number(result)));
     }
-    if(index.isValid()) {
-        orderModel->removeRow(index.row()); //모델의 현재 행 삭제
-        orderModel->select();               //모델의 데이터 조회
-        ui->orderTableView->update();       //뷰 update
-    }
+
+    QSqlQuery query(orderModel->database());   //QSqlQuery 객체(고객모델)
+    query.prepare("DELETE FROM orderList WHERE id = ?"); //sql쿼리문 준비
+    /* sql쿼리문에 값 바인딩 */
+    QString id =  index.sibling(index.row(), 0).data().toString();
+    query.bindValue(0, id);
+    query.exec();           //sql 쿼리 실행
+    orderModel->select();  //모델의 데이터 조회
+
     /* 주문삭제 시 재고반영을 위한 시그널 */
     emit removedataSent(productKey.toInt() , delStock); //제품id, 주문제거한 수량
 }

@@ -41,6 +41,7 @@ void LogThread::saveData()
             out << item->text(4) << ", ";
             out << item->text(5) << "\n";
         }
+
         file.close();
     }
 }

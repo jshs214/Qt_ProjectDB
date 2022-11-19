@@ -36,18 +36,18 @@ ChatServerForm::ChatServerForm(QWidget *parent) :
 
     ui->svClientTableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    /*  Qt에서 지원하는 데이터베이스 드라이버 QSQLITE에 고객 DB 객체 선언  */
+    /*  Qt에서 지원하는 데이터베이스 드라이버 QSQLITE에 서버사용자 DB 객체 선언  */
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "serverConnection");
     db.setDatabaseName("serverClient.db");    // DB명은 client.db
     if (db.open()) {
         QSqlQuery query(db);            // db 를 사용하여 QSqlQuery 객체를 생성
-        /* SQL 쿼리문을 사용해 고객 테이블 생성 */
+        /* SQL 쿼리문을 사용해 서버사용자 테이블 생성 */
         query.exec("CREATE TABLE IF NOT EXISTS serverClientList(status VARCHAR(10),"
                    " name VARCHAR(30) NOT NULL,"
                    "id INTEGER Primary Key );");
 
-        serverClientModel = new QSqlTableModel(this, db); // QSqlTableModel을 이용해 고객모델 객체 생성
-        serverClientModel->setTable("serverClientList");        //모델이 작동하는 DB 테이블 설정
+        serverClientModel = new QSqlTableModel(this, db); // QSqlTableModel을 이용해 서버사용자 모델 객체 생성
+        serverClientModel->setTable("serverClientList");  //모델이 작동하는 DB 테이블 설정
 
         serverClientModel->select();                      //모델의 데이터 조회
 
@@ -58,9 +58,9 @@ ChatServerForm::ChatServerForm(QWidget *parent) :
 
         ui->svClientTableView->setModel(serverClientModel); //ui에 표시할 채팅 사용자 모델
 
-        m_delegate = new Delegate;  //Delegate 클래스 객체 생성
-        ui->svClientTableView->setItemDelegate(m_delegate); //뷰에 색상 설정을 하기위한 delegate 설정
-        setBackground();            /* 모든 사용자가 Off 일 때 배경색 설정하는 메서드. */
+        m_delegate = new Delegate;                          //Delegate 클래스 객체 생성
+        ui->svClientTableView->setItemDelegate(m_delegate); //뷰에 설정을 하기위한 setItemDelegate
+        setBackground();                                    /* 모든 사용자가 Off 일 때 배경색 설정하는 메서드. */
         ui->svClientTableView->update();
 
 
