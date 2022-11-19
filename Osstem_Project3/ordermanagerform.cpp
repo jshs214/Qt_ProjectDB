@@ -4,6 +4,8 @@
 
 #include "ordermanagerform.h"
 
+#include "orderdelegate.h"
+
 #include <QFile>
 #include <QMenu>
 #include <QMessageBox>
@@ -119,6 +121,10 @@ void OrderManagerForm::loadData()
         ui->orderTableView->horizontalHeader()->setStyleSheet(
                     "QHeaderView { font-weight: bold; };");
         ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
+
+        m_delegate = new orderDelegate;                          //Delegate 클래스 객체 생성
+        ui->productItemTreeView->setItemDelegate(m_delegate); //뷰에 설정을 하기위한 setItemDelegate
+
     }
 }
 
@@ -208,6 +214,16 @@ void OrderManagerForm::updateProduct(int id, QString name,
         items.append(new QStandardItem(strings.at(i)));
     }
     productItemModel->appendRow(items);
+
+    /* 재고가 0개인 데이터 배경색 변경 */
+    QModelIndexList index = productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+                                                    "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, index){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+    }
+
+
 }
 
 /* 제품정보 데이터 제거 */
@@ -233,6 +249,20 @@ void OrderManagerForm::modProduct(int id, QString name, QString price, QString s
         productItemModel->setItem(ix.row(), 2, new QStandardItem(price));
         productItemModel->setItem(ix.row(), 3, new QStandardItem(stock));
     }
+
+    /* 재고가 0개인 데이터 배경색 변경 */
+    QModelIndexList set= productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                 "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive|Qt::MatchContains));
+    foreach(auto ix, set){
+        redList.removeOne(ix.row());
+        m_delegate->setRedRows(redList);
+    }
+    QModelIndexList zero = productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+                                                   "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, zero){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+    }
 }
 
 /* 고객 검색 시, 콤보박스index에 따른 모델 설정 및 버튼상태 변경 */
@@ -243,6 +273,7 @@ void OrderManagerForm::on_clientComboBox_activated(int index)
         ui->clientButton->setEnabled(false);
     }
     else ui->clientButton->setEnabled(true);
+
 }
 
 /* 제품 검색 시, 콤보박스index에 따른 모델 설정 및 버튼상태 변경 */
@@ -253,6 +284,21 @@ void OrderManagerForm::on_productComboBox_activated(int index)
         ui->productButton->setEnabled(false);
     }
     else ui->productButton->setEnabled(true);
+
+    /* 재고가 0개인 데이터 배경색 변경 */
+    QModelIndexList set= productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                 "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive|Qt::MatchContains));
+    foreach(auto ix, set){
+        redList.removeOne(ix.row());
+        m_delegate->setRedRows(redList);
+    }
+    QModelIndexList zero = productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+                                                   "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, zero){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+    }
+
 }
 
 /*고객 id나 이름 검색하는 슬롯 */
@@ -480,6 +526,22 @@ void OrderManagerForm::on_addPushButton_clicked()
         query.exec();             //sql쿼리문 실행
         orderModel->select();     //모델의 데이터 조회
 
+        /* 재고가 0개면 색 변경 */
+        QModelIndexList set= productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+                                                     "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive
+                                                                            |Qt::MatchContains));
+        foreach(auto ix, set){
+            redList.removeOne(ix.row());
+            m_delegate->setRedRows(redList);
+        }
+        QModelIndexList zero = productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+                                                       "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+        foreach(auto ix, zero){
+            redList.append(ix.row());
+            m_delegate->setRedRows(redList);
+        }
+
+
         /* ui의 LineEdit 값 clear */
         ui->cIdLineEdit->clear();
         ui->pIdLineEdit->clear();
@@ -572,6 +634,22 @@ void OrderManagerForm::on_modifyPushButton_clicked()
 
         query.exec();           //sql 쿼리 실행
         orderModel->select();   //모델의 데이터 조회
+
+        QModelIndexList set= productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+                                                     "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive|
+                                                                            Qt::MatchContains));
+        foreach(auto ix, set){
+            redList.removeOne(ix.row());
+            m_delegate->setRedRows(redList);
+        }
+        QModelIndexList zero = productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+                                                       "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+        foreach(auto ix, zero){
+            redList.append(ix.row());
+            m_delegate->setRedRows(redList);
+        }
+
+
     }
     ui->orderTableView->resizeColumnsToContents();  //컬럼 사이즈를 데이터에 맞게 조절
 }
@@ -683,15 +761,20 @@ void OrderManagerForm::on_orderTableView_clicked(const QModelIndex &index)
 
     /* id 검색. 고객Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList cIDIndex = clientItemModel->match(clientItemModel->index(0, 0), Qt::EditRole,
-                                                     clientID, -1, Qt::MatchFlags(Qt::MatchCaseSensitive
-                                                                             |Qt::MatchContains));
+                                                      clientID, -1, Qt::MatchFlags(Qt::MatchCaseSensitive
+                                                                                   |Qt::MatchContains));
 
     /* id 검색. 고객Item 모델에서 검색하는 데이터와 일치하거나 포함되는 데이터의 인덱스 */
     QModelIndexList pIDIndex = productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
-                                                     productID, -1, Qt::MatchFlags(Qt::MatchCaseSensitive
-                                                                             |Qt::MatchContains));
+                                                       productID, -1, Qt::MatchFlags(Qt::MatchCaseSensitive
+                                                                                     |Qt::MatchContains));
+
+    redList.clear();
+    m_delegate->setRedRows(redList);
+
     ui->clientItemTreeView->setModel(searchClientModel);    // 클릭 시, 뷰의 세팅은 고객Item모델 -> 고객Item검색모델
     ui->productItemTreeView->setModel(searchProductModel);    // 클릭 시, 뷰의 세팅은 고객Item모델 -> 고객Item검색모델
+
 
     foreach(auto ix, cIDIndex) {
         int id = clientItemModel->data(ix.siblingAtColumn(0)).toInt();
@@ -732,6 +815,7 @@ void OrderManagerForm::on_orderTableView_clicked(const QModelIndex &index)
     ui->priceLineEdit->setText( index.sibling(index.row(), 4).data().toString() );
     ui->sumLineEdit->setText( index.sibling(index.row(), 5).data().toString() );
     ui->addressLineEdit->setText( index.sibling(index.row(), 6).data().toString() );
+
 
 
 }

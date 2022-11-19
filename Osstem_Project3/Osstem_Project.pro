@@ -17,7 +17,9 @@ SOURCES += \
     logthread.cpp \
     main.cpp \
     mainwindow.cpp \
+    orderdelegate.cpp \
     ordermanagerform.cpp \
+    productdelegate.cpp \
     productmanagerform.cpp
 
 HEADERS += \
@@ -28,7 +30,9 @@ HEADERS += \
     delegate.h \
     logthread.h \
     mainwindow.h \
+    orderdelegate.h \
     ordermanagerform.h \
+    productdelegate.h \
     productmanagerform.h
 
 FORMS += \

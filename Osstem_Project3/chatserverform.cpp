@@ -245,6 +245,9 @@ void ChatServerForm::receiveData( )
                     /* 로그인 시, 해당 행 회색 배경색 제거(흰색 배경) */
                     grayList.removeOne(ix.row());
                     m_delegate->setGrayRows(grayList);
+
+                    whiteList.append(ix.row());
+                    m_delegate->setWhiteRows(whiteList);
                     return;
                 }
             }
@@ -286,6 +289,9 @@ void ChatServerForm::receiveData( )
                 chattingModel->appendRow(items);
 
                 /* 채팅방 입장 시, 해당 행 초록 배경색 설정 */
+                whiteList.removeOne(ix.row());
+                m_delegate->setWhiteRows(whiteList);
+
                 greenList.append(ix.row());
                 m_delegate->setGreenRows(greenList);
 
@@ -303,7 +309,7 @@ void ChatServerForm::receiveData( )
             if(clientPortIDHash.contains(sock->peerPort()) && sock != clientConnection) {
                 QModelIndexList index = serverClientModel->match(serverClientModel->index(0, 2),
                                                                  Qt::EditRole,  clientPortIDHash[sock->peerPort()],
-                                                                    -1, Qt::MatchFlags(Qt::MatchFixedString));
+                        -1, Qt::MatchFlags(Qt::MatchFixedString));
                 //로그인 한 id값의 인덱스를 찾음
                 foreach(auto ix, index) {
                     if (ix.sibling(ix.row(), 0).data().toString() == tr("Chat")){
@@ -371,6 +377,9 @@ void ChatServerForm::receiveData( )
                 greenList.removeOne(ix.row());
                 m_delegate->setGreenRows(greenList);
 
+                whiteList.append(ix.row());
+                m_delegate->setWhiteRows(whiteList);
+
             }
         }
         /* 채팅방의 사용자 목록 상태 변경 */
@@ -405,6 +414,9 @@ void ChatServerForm::receiveData( )
                 serverClientModel->select();   //모델의 데이터 조회
 
                 /* 로그아웃(서버 단절) 시, 해당 행 회색 배경색 설정 */
+                whiteList.removeOne(ix.row());
+                m_delegate->setWhiteRows(whiteList);
+
                 grayList.append(ix.row());
                 m_delegate->setGrayRows(grayList);
 
@@ -515,6 +527,9 @@ void ChatServerForm::inviteClient()
         serverClientModel->select();   //모델의 데이터 조회
 
         /* 초대 시, 해당 행 초록 배경색 설정 */
+        whiteList.removeOne(ix.row());
+        m_delegate->setWhiteRows(whiteList);
+
         greenList.append(ix.row());
         m_delegate->setGreenRows(greenList);
     }
@@ -562,6 +577,9 @@ void ChatServerForm::kickOut()
         /* 강퇴 시, 해당 행 초록 배경색 제거(흰색 배경) */
         greenList.removeOne(ix.row());
         m_delegate->setGreenRows(greenList);
+
+        whiteList.append(ix.row());
+        m_delegate->setWhiteRows(whiteList);
     }
     /* 채팅방 사용자 목록 변경 */
     QModelIndexList chatIndex = chattingModel->match(chattingModel->index(0, 2), Qt::EditRole,
@@ -660,7 +678,7 @@ void ChatServerForm::on_sendButton_clicked()
         foreach(QTcpSocket *sock, clientSocketHash.values()) {
             QModelIndexList index = serverClientModel->match(serverClientModel->index(0, 2),
                                                              Qt::EditRole, clientPortIDHash[sock->peerPort()],
-                                                                -1, Qt::MatchFlags(Qt::MatchFixedString));
+                    -1, Qt::MatchFlags(Qt::MatchFixedString));
             //로그인 한 id값의 인덱스를 찾음
             foreach(auto ix, index) {
                 // 채팅중인 클라이언트들에게 메시지 전송
@@ -730,7 +748,7 @@ void ChatServerForm::sendChatList()
     foreach(QTcpSocket *sock, clientSocketHash.values()) {
         QModelIndexList index = serverClientModel->match(serverClientModel->index(0, 2), Qt::EditRole,
                                                          clientPortIDHash[sock->peerPort()], -1,
-                                                         Qt::MatchFlags(Qt::MatchFixedString));
+                Qt::MatchFlags(Qt::MatchFixedString));
         foreach(auto v, index){
             Q_UNUSED(v);
             sock->write(sendArray);

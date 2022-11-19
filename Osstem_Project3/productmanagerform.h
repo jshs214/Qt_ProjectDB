@@ -7,6 +7,7 @@
 class QMenu;
 class QSqlDatabase;
 class QSqlTableModel;
+class productDelegate;
 
 namespace Ui {
 class ProductManagerForm;
@@ -28,6 +29,9 @@ private:
     QMenu* menu;    //ContextMenu를 위한 메뉴
     int makeId();       /* 고객 키값 생성 메서드 */
     QSqlTableModel *productModel;   //제품모델 객체
+
+    productDelegate *m_delegate = nullptr;
+    QList<int> redList;    //delegate로 배경색을 변경할 행을 저장하는 멤버변수
 
 signals:
     /* 고객 정보 추가, 제거, 변경시 주문정보관리에 정보 전송 시그널 */

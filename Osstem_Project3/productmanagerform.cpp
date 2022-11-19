@@ -2,6 +2,8 @@
 #include "qsqltablemodel.h"
 #include "ui_productmanagerform.h"
 
+#include "productdelegate.h"
+
 #include <QFile>
 #include <QMenu>
 #include <QSqlDatabase>
@@ -52,6 +54,8 @@ ProductManagerForm::~ProductManagerForm()
 /* 제품정보 DB의 데이터를 불러오는 메서드 */
 void ProductManagerForm::loadData()
 {
+    int zero = 0;
+
     /*  Qt에서 지원하는 데이터베이스 드라이버 QSQLITE에 제품 DB 객체 선언  */
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "productConnection");
     db.setDatabaseName("product.db");   // DB명은 product.db
@@ -75,7 +79,18 @@ void ProductManagerForm::loadData()
         ui->productTableView->setModel(productModel);   //ui에 표시할 제품모델 설정
         ui->productTableView->horizontalHeader()->setStyleSheet(
                     "QHeaderView { font-weight: bold; };");
+
+        m_delegate = new productDelegate;                          //Delegate 클래스 객체 생성
+        ui->productTableView->setItemDelegate(m_delegate); //뷰에 설정을 하기위한 setItemDelegate
+
+        QModelIndexList index = productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                          zero, -1, Qt::MatchFlags(Qt::MatchFixedString));
+        foreach(auto ix, index){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+        }
     }
+
     /* 제품정보 데이터를 불러 올 때, 주문정보에 불러온 데이터를 시그널을 통해 전송 */
     for(int i = 0; i < productModel->rowCount(); i++) {
         int id = productModel->data(productModel->index(i, 0)).toInt();
@@ -125,7 +140,7 @@ void ProductManagerForm::on_addPushButton_clicked()
 {
     /* 추가 시 변수에 입력했던 id, 이름, 전화번호, 주소의 데이터 저장 */
     QString name, price, stock, type;
-    int id = makeId( );
+    int id = makeId( ), zero = 0;
     ui->idLineEdit->setText(QString::number(id));
     name = ui->nameLineEdit->text();
     price = ui->priceLineEdit->text();
@@ -147,6 +162,21 @@ void ProductManagerForm::on_addPushButton_clicked()
 
         /* 추가한 제품정보데이터를 주문정보관리에 정보 전송 시그널 */
         emit productAddToOrder(id, name, price, stock); //id, 이름, 가격, 수량
+
+        /* 재고가 0개면 색 변경 */
+        QModelIndexList set= productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                          "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive
+                                                                                 |Qt::MatchContains));
+        foreach(auto ix, set){
+        redList.removeOne(ix.row());
+        m_delegate->setRedRows(redList);
+        }
+        QModelIndexList index = productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                          zero, -1, Qt::MatchFlags(Qt::MatchFixedString));
+        foreach(auto ix, index){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+        }
     }
 
     /* ui의 LineEdit 값 clear */
@@ -164,7 +194,7 @@ void ProductManagerForm::on_modifyPushButton_clicked()
 
     if(index.isValid()) {
         /* id는 모델의 현재 데이터값, QString 변수는 변경 할 이름, 가격, 수량의 데이터 저장 */
-        int id = productModel->data(index.siblingAtColumn(0)).toInt();
+        int id = productModel->data(index.siblingAtColumn(0)).toInt(), zero = 0;
         QString name, price, stock, type;
         name = ui->nameLineEdit->text();
         price = ui->priceLineEdit->text();
@@ -186,6 +216,21 @@ void ProductManagerForm::on_modifyPushButton_clicked()
 
         /* 변경한 제품정보데이터를 주문정보관리에 정보 전송 시그널 */
         emit productModToOrder(id, name, price, stock); //id, 이름, 가격, 수량
+
+        /* 재고가 0개면 색 변경 */
+        QModelIndexList set= productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                          "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive
+                                                                                 |Qt::MatchContains));
+        foreach(auto ix, set){
+        redList.removeOne(ix.row());
+        m_delegate->setRedRows(redList);
+        }
+        QModelIndexList index = productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                          zero, -1, Qt::MatchFlags(Qt::MatchFixedString));
+        foreach(auto ix, index){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+        }
     }
 }
 
@@ -288,7 +333,7 @@ void ProductManagerForm::receiveAddStock(int key, QString inStock) //id, 주문�
 {
     QSqlQuery query(productModel->database());  //QSqlQuery 객체(제품모델)
     int stock, result;  //기존수량, 반영할 재고수량
-
+    int zero = 0;
     query.prepare("SELECT stock FROM productList WHERE id = ?");    //sql쿼리문 준비
     query.bindValue(0, key);    //sql쿼리문에 값 바인딩
     query.exec();               //sql 쿼리 실행
@@ -313,6 +358,16 @@ void ProductManagerForm::receiveAddStock(int key, QString inStock) //id, 주문�
 
     query.exec();               //sql 쿼리 실행
     productModel->select();     //모델의 데이터 조회
+
+    /* 제품id index. 제품Item 모델에서 검색하는 데이터와 일치하는 데이터의 인덱스 */
+    /* 재고가 0개면 색 변경 */
+    QModelIndexList index = productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                      zero, -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, index){
+    redList.append(ix.row());
+    m_delegate->setRedRows(redList);
+    }
+
 }
 
 /* Order에서 주문변경 시, 재고반영을 위한 슬롯 */
@@ -320,7 +375,7 @@ void ProductManagerForm::receiveModStock(int key, QString updateStock,
                                          QString orderStock)   // 키값, 수정할 수량, 주문 되어있는 수량
 {
     QSqlQuery query(productModel->database());  //QSqlQuery 객체(제품모델)
-    int stock, result;  //기존수량, 반영할 재고수량
+    int stock, result, zero =0;  //기존수량, 반영할 재고수량
 
     // 주문 전 기존 재고 조회
     query.prepare("SELECT stock FROM productList WHERE id = ?");    //sql쿼리문 준비
@@ -338,6 +393,23 @@ void ProductManagerForm::receiveModStock(int key, QString updateStock,
     query.bindValue(1, key);
     query.exec();   //sql 쿼리 실행
     productModel->select();     //모델의 데이터 조회
+
+    /* 재고가 0개면 색 변경 */
+    QModelIndexList set= productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                      "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive
+                                                                             |Qt::MatchContains));
+    foreach(auto ix, set){
+    redList.removeOne(ix.row());
+    m_delegate->setRedRows(redList);
+    }
+    QModelIndexList index = productModel->match(productModel->index(0, 3), Qt::EditRole,
+                                                      zero, -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, index){
+    redList.append(ix.row());
+    m_delegate->setRedRows(redList);
+    }
+
+
 }
 
 /* Order에서 주문내역제거 시, 재고반영을 위한 슬롯 */

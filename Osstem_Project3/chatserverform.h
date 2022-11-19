@@ -71,6 +71,7 @@ private:
 
     QList<int> grayList;    //delegate로 배경색을 변경할 행을 저장하는 멤버변수
     QList<int> greenList;   //delegate로 배경색을 변경할 행을 저장하는 멤버변수
+    QList<int> whiteList;   //delegate로 배경색을 변경할 행을 저장하는 멤버변수
 
 private slots:
     void addClient(int, QString);          /* 고객의 데이터가 추가되면 서버에도 추가하는 슬롯 */

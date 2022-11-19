@@ -14,12 +14,15 @@ public:
     /* 벡터에 index 값을 받아오는 set함수 */
     void setGreenRows(const QVector<int> &rows);
     void setGrayRows(const QVector<int> &rows);
+    void setWhiteRows(const QVector<int> &rows);
 
 protected:
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
 private:
     QVector<int> m_greenRows;       /* 초록색 배경 설정을 위한 행의 index를 저장하는 벡터 */
     QVector<int> m_grayRows;        /* 회색 배경 설정을 위한 행의 index를 저장하는 벡터 */
+    QVector<int> m_whiteRows;        /* 회색 배경 설정을 위한 행의 index를 저장하는 벡터 */
+
 };
 
 #endif // DELEGATE_H

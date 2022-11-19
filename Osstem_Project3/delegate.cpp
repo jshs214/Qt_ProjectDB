@@ -12,7 +12,10 @@ void Delegate::setGrayRows(const QVector<int> &rows)
     m_grayRows=(rows);
 }
 
-
+void Delegate::setWhiteRows(const QVector<int> &rows)
+{
+    m_whiteRows=(rows);
+}
 void Delegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const {
     QStyledItemDelegate::initStyleOption(option, index);
 
@@ -23,5 +26,7 @@ void Delegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &
     if(m_grayRows.contains(index.row())){
         option->backgroundBrush = QBrush(QColor("lightgray"));
     }
-
+    if(m_whiteRows.contains(index.row())){
+        option->backgroundBrush = QBrush(QColor("white"));
+    }
 }

@@ -8,6 +8,7 @@ class QMenu;
 class QTreeWidgetItem;
 class QSqlTableModel;
 class QStandardItemModel;
+class orderDelegate;
 
 namespace Ui {
 class OrderManagerForm;
@@ -36,6 +37,9 @@ private:
 
     QStandardItemModel *searchClientModel;  //고객검색Item모델
     QStandardItemModel *searchProductModel; //제품검색Item모델
+
+    orderDelegate *m_delegate = nullptr;
+    QList<int> redList;    //delegate로 배경색을 변경할 행을 저장하는 멤버변수
 
 signals:
     /* 재고반영을 위한 시그널  */
