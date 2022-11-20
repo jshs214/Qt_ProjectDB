@@ -396,6 +396,9 @@ void OrderManagerForm::on_productButton_clicked()
     QModelIndexList nameindex = productItemModel->match(productItemModel->index(0, 1), Qt::EditRole,
                                                         str, -1, Qt::MatchFlags(flag));
 
+
+    redList.clear();
+    m_delegate->setRedRows(redList);
     ui->productItemTreeView->setModel(searchProductModel);  // 검색 시, 뷰의 세팅은 제품 Item모델 -> 제품 Item검색모델
     switch (i){
     case 1: //id 검색
@@ -439,6 +442,19 @@ void OrderManagerForm::on_productButton_clicked()
 
     default:
         break;
+    }
+    /* 재고가 0개인 데이터 배경색 변경 */
+    QModelIndexList set= searchProductModel->match(searchProductModel->index(0, 0), Qt::EditRole,
+                                                 "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive|Qt::MatchContains));
+    foreach(auto ix, set){
+        redList.removeOne(ix.row());
+        m_delegate->setRedRows(redList);
+    }
+    QModelIndexList zero = searchProductModel->match(searchProductModel->index(0, 3), Qt::EditRole,
+                                                   "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, zero){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
     }
 }
 
@@ -635,14 +651,14 @@ void OrderManagerForm::on_modifyPushButton_clicked()
         query.exec();           //sql 쿼리 실행
         orderModel->select();   //모델의 데이터 조회
 
-        QModelIndexList set= productItemModel->match(productItemModel->index(0, 0), Qt::EditRole,
+        QModelIndexList set= searchProductModel->match(searchProductModel->index(0, 0), Qt::EditRole,
                                                      "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive|
                                                                             Qt::MatchContains));
         foreach(auto ix, set){
             redList.removeOne(ix.row());
             m_delegate->setRedRows(redList);
         }
-        QModelIndexList zero = productItemModel->match(productItemModel->index(0, 3), Qt::EditRole,
+        QModelIndexList zero = searchProductModel->match(searchProductModel->index(0, 3), Qt::EditRole,
                                                        "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
         foreach(auto ix, zero){
             redList.append(ix.row());
@@ -776,6 +792,7 @@ void OrderManagerForm::on_orderTableView_clicked(const QModelIndex &index)
     ui->productItemTreeView->setModel(searchProductModel);    // 클릭 시, 뷰의 세팅은 고객Item모델 -> 고객Item검색모델
 
 
+
     foreach(auto ix, cIDIndex) {
         int id = clientItemModel->data(ix.siblingAtColumn(0)).toInt();
         QString name = clientItemModel->data(ix.siblingAtColumn(1)).toString();
@@ -817,6 +834,19 @@ void OrderManagerForm::on_orderTableView_clicked(const QModelIndex &index)
     ui->addressLineEdit->setText( index.sibling(index.row(), 6).data().toString() );
 
 
+    /* 재고가 0개인 데이터 배경색 변경 */
+    QModelIndexList set= searchProductModel->match(searchProductModel->index(0, 0), Qt::EditRole,
+                                                 "", -1, Qt::MatchFlags(Qt::MatchCaseSensitive|Qt::MatchContains));
+    foreach(auto ix, set){
+        redList.removeOne(ix.row());
+        m_delegate->setRedRows(redList);
+    }
+    QModelIndexList zero = searchProductModel->match(searchProductModel->index(0, 3), Qt::EditRole,
+                                                   "0", -1, Qt::MatchFlags(Qt::MatchFixedString));
+    foreach(auto ix, zero){
+        redList.append(ix.row());
+        m_delegate->setRedRows(redList);
+    }
 
 }
 
